@@ -8,7 +8,7 @@ from grid_world.type_aliases import Q
 def best_q_value(q: Q, state: State, actions: Collection[Action]) -> float:
     ans = float("-inf")
     for a in actions:
-        if (qa := q[state, a]) > ans:
+        if (qa := q.get((state, a), 0)) > ans:
             ans = qa
 
     return ans

@@ -111,6 +111,4 @@ class MonteCarloAgent:
 
         for s, a in fvr:
             self.u[s, a] = self.u[s, a] + 1
-            self.q[s, a] = (
-                self.q[s, a] + (fvr[s, a] - self.q[s, a]) / self.u[s, a]
-            )
+            self.q[s, a] = self.q[s, a] + (fvr[s, a] - self.q[s, a]) / self.u[s, a]
