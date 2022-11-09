@@ -3,11 +3,11 @@ from typing import Final, Collection
 from grid_world.action import Action
 from grid_world.grid_world import GridWorld
 from grid_world.state import State
-from grid_world.type_aliases import Police, RewardFunction, Q
-from grid_world.utils.police import (
-    get_random_police,
+from grid_world.type_aliases import Policy, RewardFunction, Q
+from grid_world.utils.policy import (
+    get_random_policy,
     sample_action,
-    get_e_greedy_police,
+    get_e_greedy_policy,
 )
 from grid_world.utils.returns import returns_from_reward
 
@@ -18,7 +18,7 @@ class SarsaAgent:
         world: GridWorld,
         reward_function: RewardFunction,
         actions: Collection[Action] = None,
-        police: Police = None,
+        policy: Policy = None,
         gamma: float = 1,
         alpha: float = 0.1,
         epsilon: float = 0.1,
@@ -27,7 +27,7 @@ class SarsaAgent:
         self.world: Final = world
         self.reward_function: Final = reward_function
         self.actions: Final = actions if actions is not None else tuple(Action)
-        self.police = Police if police is not None else get_random_police(self.actions)
+        self.policy = Policy if policy is not None else get_random_policy(self.actions)
         self.gamma = gamma
         self.alpha = alpha
         self.epsilon = epsilon
@@ -59,11 +59,11 @@ class SarsaAgent:
         episode_actions = []
         episode_rewards = []
 
-        # run through the world while updating q and the police as we go
-        action = sample_action(self.police, state, self.actions)
+        # run through the world while updating q and the policy as we go
+        action = sample_action(self.policy, state, self.actions)
         while state.kind != "terminal":
             new_state, effect = self.world.take_action(state, action)
-            next_action = sample_action(self.police, new_state, self.actions)
+            next_action = sample_action(self.policy, new_state, self.actions)
             reward = self.reward_function(effect)
             self.visited_states.add(new_state)
 
@@ -75,7 +75,7 @@ class SarsaAgent:
             )
 
             # improve from what was learned
-            self.police = get_e_greedy_police(
+            self.policy = get_e_greedy_policy(
                 self.q, self.visited_states, self.actions, self.epsilon
             )
 

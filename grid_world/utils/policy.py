@@ -1,4 +1,4 @@
-from typing import Iterable, Collection, Collection
+from typing import Iterable, Collection
 
 import numpy as np
 
@@ -7,12 +7,12 @@ from utils.operations import add_tuples
 from grid_world.action import Action
 from grid_world.grid_world import GridWorld
 from grid_world.state import State
-from grid_world.type_aliases import PoliceRec, Police, Q
+from grid_world.type_aliases import PolicyRec, Policy, Q
 
 
-def get_police_rec(
-    pi: Police, world: GridWorld, actions: Iterable[Action]
-) -> PoliceRec:
+def get_policy_rec(
+    pi: Policy, world: GridWorld, actions: Iterable[Action]
+) -> PolicyRec:
     if actions is None:
         actions = Action
 
@@ -27,9 +27,9 @@ def get_police_rec(
     return pi_rec
 
 
-def get_random_police(actions: Collection[Action]) -> Police:
+def get_random_policy(actions: Collection[Action]) -> Policy:
     """
-    Builds a random uniform police over a set of actions
+    Builds a random uniform policy over a set of actions
 
     :param actions: Collection of allowed actions over a state, this is
     assumed to be the same for every state
@@ -38,18 +38,18 @@ def get_random_police(actions: Collection[Action]) -> Police:
     return lambda s, a: 1 / len(actions)
 
 
-def sample_action(police: Police, state: State, actions: Collection[Action]) -> Action:
+def sample_action(policy: Policy, state: State, actions: Collection[Action]) -> Action:
     cum_sum = 0
     n0 = np.random.uniform()
     for action in actions:
-        cum_sum += police(state, action)
+        cum_sum += policy(state, action)
         if n0 <= cum_sum:
             return action
 
-    raise ValueError("police does not add to 1 over actions")
+    raise ValueError("policy does not add to 1 over actions")
 
 
-def get_e_greedy_police(
+def get_e_greedy_policy(
     q: Q, states: Collection[State], actions: Collection[Action], epsilon: float = 0.1
 ):
     """
@@ -63,16 +63,16 @@ def get_e_greedy_police(
     :param epsilon: the parameter that names the function
     :return: our epsilon greedy function
     """
-    police_map = {}
+    policy_map = {}
     p_0 = epsilon / len(actions)
     for s in states:
         best_action = get_best_action_from_q(q, s, actions)
         for a in actions:
-            police_map[s, a] = p_0 + (1 - epsilon if a == best_action else 0)
+            policy_map[s, a] = p_0 + (1 - epsilon if a == best_action else 0)
 
     return (
-        lambda cs, ca: police_map[cs, ca]
-        if (cs, ca) in police_map.keys()
+        lambda cs, ca: policy_map[cs, ca]
+        if (cs, ca) in policy_map.keys()
         else 1 / len(actions)
     )
 
@@ -86,7 +86,7 @@ def get_best_action_from_q(q: Q, s: State, actions: Collection[Action]) -> Actio
     return best_action
 
 
-def get_explorer_police(
+def get_explorer_policy(
     q: Q,
     world_map: set[State],
     actions: Collection[Action],
@@ -103,20 +103,20 @@ def get_explorer_police(
     :param epsilon: the parameter that names the function
     :return: our epsilon greedy function
     """
-    police_map = {}
+    policy_map = {}
     for s in world_map:
         best_action = get_best_action_from_q(q, s, reasonable_actions.get(s, actions))
         p_0 = epsilon / len(reasonable_actions[s])
         for a in actions:
-            police_map[s, a] = (
+            policy_map[s, a] = (
                 p_0 + (1 - epsilon if a == best_action else 0)
                 if a in reasonable_actions[s]
                 else 0
             )
 
     return (
-        lambda cs, ca: police_map[cs, ca]
-        if (cs, ca) in police_map.keys()
+        lambda cs, ca: policy_map[cs, ca]
+        if (cs, ca) in policy_map.keys()
         else 1 / len(actions)
     )
 

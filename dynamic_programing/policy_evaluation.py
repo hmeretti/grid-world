@@ -5,7 +5,7 @@ import numpy as np
 from dynamic_programing.type_aliases import (
     State,
     EvalFunction,
-    Police,
+    Policy,
     RewardFunction,
     WorldModel,
     Action,
@@ -15,7 +15,7 @@ from dynamic_programing.type_aliases import (
 def _acc_v(
     s: State,
     v: EvalFunction,
-    pi: Police,
+    pi: Policy,
     world_model: WorldModel,
     reward_function: RewardFunction,
     actions: Collection[Action],
@@ -37,7 +37,7 @@ def _acc_v(
 
 
 def _iterate_policy_step(
-    pi: Police,
+    pi: Policy,
     world_model: WorldModel,
     reward_function: RewardFunction,
     actions: Collection[Action],
@@ -52,7 +52,7 @@ def _iterate_policy_step(
 
 
 def iterative_policy_evaluation(
-    pi: Police,
+    pi: Policy,
     world_model: WorldModel,
     reward_function: RewardFunction,
     actions: Collection[Action],
@@ -62,10 +62,10 @@ def iterative_policy_evaluation(
     epsilon: float = 0.01,
 ) -> EvalFunction:
     """
-    Function to create evaluation of police. That is a mapping from states to the estimated
-    accumulated discounted reward from that state, when following police pi.
+    Function to create evaluation of policy. That is a mapping from states to the estimated
+    accumulated discounted reward from that state, when following policy pi.
 
-    :param pi: police to be evaluated
+    :param pi: policy to be evaluated
     :param world_model: dynamics model of the world. A function of states actions, that returns
         the probability distribution of landing in a new state.
     :param reward_function: the reward for taking an action in a given state
@@ -75,7 +75,7 @@ def iterative_policy_evaluation(
     :param gamma: discount factor for rewards
     :param epsilon: stop criteria. Iteration will stop whenever the maximum change on a state
         evaluation is lower then this
-    :return: the evaluation of police pi
+    :return: the evaluation of policy pi
     """
     v = {a: 0 for a in states} if v0 is None else v0.copy()
 

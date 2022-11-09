@@ -3,12 +3,12 @@ from typing import Final, Collection
 from grid_world.action import Action
 from grid_world.grid_world import GridWorld
 from grid_world.state import State
-from grid_world.type_aliases import Police, RewardFunction, Q
+from grid_world.type_aliases import Policy, RewardFunction, Q
 from grid_world.utils.evaluators import best_q_value
-from grid_world.utils.police import (
-    get_random_police,
+from grid_world.utils.policy import (
+    get_random_policy,
     sample_action,
-    get_explorer_police,
+    get_explorer_policy,
     get_reasonable_actions,
 )
 from grid_world.utils.returns import returns_from_reward
@@ -20,14 +20,14 @@ class QExplorerAgent:
         self,
         reward_function: RewardFunction,
         actions: Collection[Action] = None,
-        police: Police = None,
+        policy: Policy = None,
         gamma: float = 1,
         alpha: float = 0.1,
         epsilon: float = 0.1,
     ):
         self.reward_function: Final = reward_function
         self.actions: Final = actions if actions is not None else tuple(Action)
-        self.police = Police if police is not None else get_random_police(self.actions)
+        self.policy = Policy if policy is not None else get_random_policy(self.actions)
         self.gamma = gamma
         self.alpha = alpha
         self.epsilon = epsilon
@@ -56,9 +56,9 @@ class QExplorerAgent:
         episode_actions = []
         episode_rewards = []
 
-        # run through the world while updating q the police and our map as we go
+        # run through the world while updating q the policy and our map as we go
         while state.kind != "terminal":
-            action = sample_action(self.police, state, self.actions)
+            action = sample_action(self.policy, state, self.actions)
             new_state, effect = world.take_action(state, action)
             reward = self.reward_function(effect)
             # if we hit a wall or the border the agent will stand still, in this case we mark it as a wall
@@ -87,7 +87,7 @@ class QExplorerAgent:
             )
 
             # improve from what was learned
-            self.police = get_explorer_police(
+            self.policy = get_explorer_policy(
                 self.q, self.world_map, self.actions, reasonable_actions, self.epsilon
             )
 
