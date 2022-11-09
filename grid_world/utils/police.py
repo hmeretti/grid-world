@@ -2,9 +2,12 @@ from typing import Iterable, Collection, Collection
 
 import numpy as np
 
-from dynamic_programing.type_aliases import Action
+from utils.operations import add_tuples
+
+from grid_world.action import Action
 from grid_world.grid_world import GridWorld
-from grid_world.type_aliases import PoliceRec, Police, State, Q
+from grid_world.state import State
+from grid_world.type_aliases import PoliceRec, Police, Q
 
 
 def get_police_rec(
@@ -77,7 +80,55 @@ def get_e_greedy_police(
 def get_best_action_from_q(q: Q, s: State, actions: Collection[Action]) -> Action:
     best_score = float("-inf")
     for a in actions:
-        if (score := q[s, a]) > best_score:
+        if (score := q.get((s, a), 0)) > best_score:
             best_score = score
             best_action = a
     return best_action
+
+
+def get_explorer_police(
+    q: Q,
+    world_map: set[State],
+    actions: Collection[Action],
+    reasonable_actions: dict[State, Collection[Action]],
+    epsilon: float = 0.1,
+):
+    """
+    This creates ....
+
+    :param q: the Q function
+    :param world_map: a set of states, representing a partial map of our world
+    :param actions: all possible actions to be considered
+    :param reasonable_actions: reasonable  actions worth exploring
+    :param epsilon: the parameter that names the function
+    :return: our epsilon greedy function
+    """
+    police_map = {}
+    for s in world_map:
+        best_action = get_best_action_from_q(q, s, reasonable_actions.get(s, actions))
+        p_0 = epsilon / len(reasonable_actions[s])
+        for a in actions:
+            police_map[s, a] = (
+                p_0 + (1 - epsilon if a == best_action else 0)
+                if a in reasonable_actions[s]
+                else 0
+            )
+
+    return (
+        lambda cs, ca: police_map[cs, ca]
+        if (cs, ca) in police_map.keys()
+        else 1 / len(actions)
+    )
+
+
+def get_reasonable_actions(
+    world_map: set[State], s: State, actions: Collection[Action]
+) -> Collection[Action]:
+    no_go_coordinates = [
+        cs.coordinates for cs in world_map if cs.kind in {"trap", "wall"}
+    ]
+    return [
+        a
+        for a in actions
+        if add_tuples(s.coordinates, a.direction) not in no_go_coordinates
+    ]

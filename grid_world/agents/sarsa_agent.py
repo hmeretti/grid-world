@@ -39,7 +39,8 @@ class SarsaAgent:
         self.visited_states: set[State] = set()
 
     def train(
-        self, episodes: int = 100,
+        self,
+        episodes: int = 100,
     ) -> tuple[list[int], list[float]]:
         episode_lengths = []
         episode_total_returns = []
