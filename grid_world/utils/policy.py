@@ -13,6 +13,16 @@ from grid_world.type_aliases import PolicyRec, Policy, Q
 def get_policy_rec(
     pi: Policy, world: GridWorld, actions: Iterable[Action]
 ) -> PolicyRec:
+    """
+    Generate a function  that tells for each state the action which the policy consider the "best"(the
+    one it recommends the agent to take more often)
+
+    :param pi: a policy, i.e. a function that tells for each state action pair, how likely we should take it
+    :param world: the world to which this policy applies
+    :param actions: available actions to which this policy applies
+    :return: a functions that tells for each state the action which the policy consider the "best"(the
+    one it recommends the agent to take more often)
+    """
     if actions is None:
         actions = Action
 
@@ -94,7 +104,10 @@ def get_explorer_policy(
     epsilon: float = 0.1,
 ):
     """
-    This creates ....
+    This creates a policy similar to epsilon greedy. However, it uses a partial map of the world, and
+    a list of reasonable actions to take at each state to avoid making simple mistakes,
+    like hitting walls and falling into traps. The reasonable actions parameter is responsible for deciding
+    what the police allows or not.
 
     :param q: the Q function
     :param world_map: a set of states, representing a partial map of our world
@@ -124,6 +137,15 @@ def get_explorer_policy(
 def get_reasonable_actions(
     world_map: set[State], s: State, actions: Collection[Action]
 ) -> Collection[Action]:
+    """
+    Generate a list of "reasonable" actions for a specific state. This is done by using a partial
+    map of our world to filter out actions which would lead to undesirable results.
+
+    :param world_map: a set of states, representing a partial map of our world
+    :param s: the state to generate actions for
+    :param actions: actions to be considered
+    :return: list of reasonable actions to take on that state
+    """
     no_go_coordinates = [
         cs.coordinates for cs in world_map if cs.kind in {"trap", "wall"}
     ]
