@@ -1,18 +1,16 @@
 from typing import Final, Collection
 
 from grid_world.action import Action
+from grid_world.agents.world_map import WorldMap
 from grid_world.grid_world import GridWorld
-from grid_world.state import State
 from grid_world.type_aliases import Policy, RewardFunction, Q
 from grid_world.utils.evaluators import best_q_value
 from grid_world.utils.policy import (
     get_random_policy,
     sample_action,
     get_explorer_policy,
-    get_reasonable_actions,
 )
 from grid_world.utils.returns import returns_from_reward
-from utils.operations import add_tuples
 
 
 class QExplorerAgent:
@@ -32,7 +30,7 @@ class QExplorerAgent:
         self.alpha = alpha
         self.epsilon = epsilon
         self.q: Q = dict()
-        self.world_map: set[State] = set()
+        self.world_map: WorldMap = WorldMap(world_states=set(), actions=self.actions)
 
     def train(
         self,
@@ -61,19 +59,9 @@ class QExplorerAgent:
             action = sample_action(self.policy, state, self.actions)
             new_state, effect = world.take_action(state, action)
             reward = self.reward_function(effect)
-            # if we hit a wall or the border the agent will stand still, in this case we mark it as a wall
-            if new_state == state:
-                self.world_map.add(
-                    State(add_tuples(state.coordinates, action.direction), "wall")
-                )
-            else:
-                self.world_map.add(new_state)
 
-            # determine reasonable actions
-            reasonable_actions = {
-                s: get_reasonable_actions(self.world_map, s, self.actions)
-                for s in self.world_map
-            }
+            # update our map based on what happened
+            self.world_map.update_map(state, action, new_state)
 
             # learn from what happened
             cur_q = self.q.get((state, action), 0)
@@ -81,14 +69,14 @@ class QExplorerAgent:
                 reward
                 + self.gamma
                 * best_q_value(
-                    self.q, new_state, reasonable_actions.get(new_state, self.actions)
+                    self.q, new_state, self.world_map.reasonable_actions.get(new_state, self.actions)
                 )
                 - cur_q
             )
 
             # improve from what was learned
             self.policy = get_explorer_policy(
-                self.q, self.world_map, self.actions, reasonable_actions, self.epsilon
+                self.q, self.world_map.world_states, self.actions, self.world_map.reasonable_actions, self.epsilon
             )
 
             state = new_state

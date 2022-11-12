@@ -132,25 +132,3 @@ def get_explorer_policy(
         if (cs, ca) in policy_map.keys()
         else 1 / len(actions)
     )
-
-
-def get_reasonable_actions(
-    world_map: set[State], s: State, actions: Collection[Action]
-) -> Collection[Action]:
-    """
-    Generate a list of "reasonable" actions for a specific state. This is done by using a partial
-    map of our world to filter out actions which would lead to undesirable results.
-
-    :param world_map: a set of states, representing a partial map of our world
-    :param s: the state to generate actions for
-    :param actions: actions to be considered
-    :return: list of reasonable actions to take on that state
-    """
-    no_go_coordinates = [
-        cs.coordinates for cs in world_map if cs.kind in {"trap", "wall"}
-    ]
-    return [
-        a
-        for a in actions
-        if add_tuples(s.coordinates, a.direction) not in no_go_coordinates
-    ]
