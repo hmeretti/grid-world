@@ -1,13 +1,13 @@
 from typing import Collection
 
-from dynamic_programing.police_evaluation import iterative_policy_evaluation
+from dynamic_programing.policy_evaluation import iterative_policy_evaluation
 from dynamic_programing.type_aliases import (
     State,
     EvalFunction,
     Action,
     WorldModel,
     RewardFunction,
-    Police,
+    Policy,
 )
 from utils.operations import float_dict_comparison
 
@@ -43,7 +43,7 @@ def get_greedy_policy(
     reward_function: RewardFunction,
     actions: Collection[Action],
     states: Collection[State],
-) -> Police:
+) -> Policy:
     """
     Creates a greed policy with respect to a evaluation function. Since this function only
     takes into account states and not actions(its the V not the q from the literature), we
@@ -67,7 +67,7 @@ def get_greedy_policy(
 
 def _dpi_step(
     v_pi, world_model, reward_function, actions, states
-) -> [Police, EvalFunction]:
+) -> [Policy, EvalFunction]:
     pi_1 = get_greedy_policy(v_pi, world_model, reward_function, actions, states)
     v_pi_1 = iterative_policy_evaluation(
         pi_1, world_model, reward_function, actions, states, v_pi
@@ -81,11 +81,11 @@ def dynamic_programing_gpi(
     reward_function: RewardFunction,
     actions: Collection[Action],
     states: Collection[State],
-    pi: Police = None,
+    pi: Policy = None,
     max_epochs: int = 100,
-) -> [Police, EvalFunction]:
+) -> [Policy, EvalFunction]:
     """
-    General police improvement algorithm using dynamic programing.
+    General policy improvement algorithm using dynamic programing.
 
     :param world_model: dynamics model of the world. A function of states actions, that returns
         the probability distribution of landing in a new state.
@@ -93,9 +93,9 @@ def dynamic_programing_gpi(
     :param actions: all possible actions
     :param states: all possible states
     :param pi: an initial policy, will user random uniform if none is passed
-    :param max_epochs: max number of police iterations to run(will stop early if the value
+    :param max_epochs: max number of policy iterations to run(will stop early if the value
         function converges)
-    :return: the optimal police and its value function
+    :return: the optimal policy and its value function
     """
 
     if pi is None:
@@ -112,7 +112,7 @@ def dynamic_programing_gpi(
         pi, v_pi = _dpi_step(v_pi, world_model, reward_function, actions, states)
 
         if float_dict_comparison(v_pi, v_pi_0):
-            print(f"police converged in {i} epochs")
+            print(f"policy converged in {i} epochs")
             break
 
     return pi, v_pi

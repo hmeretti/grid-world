@@ -1,11 +1,11 @@
 import numpy as np
 
 from grid_world.grid_world import GridWorld
-from grid_world.type_aliases import PoliceRec, EvalFunction, State
+from grid_world.type_aliases import PolicyRec, EvalFunction, State
 from grid_world.visualization.unicode_definitions import states_symbols
 
 
-def get_police_rec_str(d: PoliceRec, world: GridWorld) -> str:
+def get_policy_rec_str(d: PolicyRec, world: GridWorld) -> str:
     dict_str = ""
     for i in reversed(range(world.grid_shape[0])):
         for j in range(world.grid_shape[1]):
@@ -23,7 +23,7 @@ def get_police_rec_str(d: PoliceRec, world: GridWorld) -> str:
     return dict_str
 
 
-def get_police_eval_str(v: EvalFunction, world: GridWorld) -> str:
+def get_policy_eval_str(v: EvalFunction, world: GridWorld) -> str:
     v0 = {x: f"{v[x]:.2f}" for x in v}
     ml = np.max([len(x) for x in v0.values()])
     spaces = " " * ml
