@@ -69,14 +69,20 @@ class QExplorerAgent:
                 reward
                 + self.gamma
                 * best_q_value(
-                    self.q, new_state, self.world_map.reasonable_actions.get(new_state, self.actions)
+                    self.q,
+                    new_state,
+                    self.world_map.reasonable_actions.get(new_state, self.actions),
                 )
                 - cur_q
             )
 
             # improve from what was learned
             self.policy = get_explorer_policy(
-                self.q, self.world_map.world_states, self.actions, self.world_map.reasonable_actions, self.epsilon
+                self.q,
+                self.world_map.world_states,
+                self.actions,
+                self.world_map.reasonable_actions,
+                self.epsilon,
             )
 
             state = new_state
