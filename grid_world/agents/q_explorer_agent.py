@@ -23,6 +23,22 @@ class QExplorerAgent:
         alpha: float = 0.1,
         epsilon: float = 0.1,
     ):
+        """
+        Agent very similar to q-learning, that uses an improved exploration policy. The agent uses the same method
+        as q-learning to update its Q function, however it uses a different exploration policy, more suited to this
+        specific problem. It does so by keeping track of a world map, and ignoring actions that are surely bad when
+        doing exploration(hitting walls or traps).
+
+        This agent is not well suited for stochastic worlds.
+
+        :reward_function: the reward function we are trying to maximize
+        :actions: actions available to the agent
+        :policy: initial policy for the agent
+        :gamma: the gamma discount value to be used when calculating episode returns
+        :alpha: learning rate
+        :epsilon: exploration rate to be considered when building policies
+
+        """
         self.reward_function: Final = reward_function
         self.actions: Final = actions if actions is not None else tuple(Action)
         self.policy = Policy if policy is not None else get_random_policy(self.actions)
