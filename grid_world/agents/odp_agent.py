@@ -53,15 +53,14 @@ class ODPAgent:
         self.world_height = world_height
 
     def train(
-        self,
-        world: GridWorld,
-        episodes: int = 100,
-        verbose: bool = False
+        self, world: GridWorld, episodes: int = 100, verbose: bool = False
     ) -> tuple[list[int], list[float]]:
         episode_lengths = []
         episode_total_returns = []
         for _ in range(episodes):
-            episode_actions, episode_states, episode_rewards = self.run_episode(world, verbose)
+            episode_actions, episode_states, episode_rewards = self.run_episode(
+                world, verbose
+            )
             episode_returns = returns_from_reward(episode_rewards, self.gamma)
             episode_lengths.append(len(episode_actions))
             episode_total_returns.append(episode_returns[0])
@@ -151,6 +150,6 @@ class ODPAgent:
             reward_function=lambda x, y: rewards_dict[(x, y)],
             actions=self.actions,
             states=world.states,
-            verbose=verbose
+            verbose=verbose,
         )
         return policy
