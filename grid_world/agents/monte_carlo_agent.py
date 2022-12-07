@@ -23,6 +23,19 @@ class MonteCarloAgent:
         epsilon: float = 0.1,
         q_0: Q = None,
     ):
+        """
+        Agent implementing a solution based on estimating the value of state-action pairs. Updates are done whenever
+        an episode is complete, and only affect visited states.
+
+        :world: the world this agent will explore
+        :reward_function: the reward function we are trying to maximize
+        :actions: actions available to the agent
+        :policy: initial policy for the agent
+        :gamma: the gamma discount value to be used when calculating episode returns
+        :epsilon: exploration rate to be considered when building policies
+        :q_0: initial estimates of state-action values, will be considered as a constant 0 if not provided
+        """
+
         self.world: Final = world
         self.reward_function: Final = reward_function
         self.actions: Final = actions if actions is not None else tuple(Action)

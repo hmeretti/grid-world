@@ -45,7 +45,7 @@ def get_greedy_policy(
     states: Collection[State],
 ) -> Policy:
     """
-    Creates a greed policy with respect to a evaluation function. Since this function only
+    Creates a greed policy with respect to an evaluation function. Since this function only
     takes into account states and not actions(its the V not the q from the literature), we
     still need the world model and reward function to create this policy.
 
@@ -62,7 +62,7 @@ def get_greedy_policy(
         for s in states
     }
 
-    return lambda s, a: 1 if (a == gpr[s]) else 0
+    return lambda s, a: 1 if (a == gpr.get(s)) else 0
 
 
 def _dpi_step(
@@ -83,6 +83,7 @@ def dynamic_programing_gpi(
     states: Collection[State],
     pi: Policy = None,
     max_epochs: int = 100,
+    verbose: bool = False,
 ) -> [Policy, EvalFunction]:
     """
     General policy improvement algorithm using dynamic programing.
@@ -95,6 +96,7 @@ def dynamic_programing_gpi(
     :param pi: an initial policy, will user random uniform if none is passed
     :param max_epochs: max number of policy iterations to run(will stop early if the value
         function converges)
+    :param verbose: whether we should print additional information or not
     :return: the optimal policy and its value function
     """
 
@@ -112,7 +114,8 @@ def dynamic_programing_gpi(
         pi, v_pi = _dpi_step(v_pi, world_model, reward_function, actions, states)
 
         if float_dict_comparison(v_pi, v_pi_0):
-            print(f"policy converged in {i} epochs")
+            if verbose:
+                print(f"policy converged in {i} epochs")
             break
 
     return pi, v_pi

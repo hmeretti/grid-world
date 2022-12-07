@@ -12,10 +12,14 @@ class WorldMap:
         world_states: set[State] = None,
         actions: Collection[Action] = None,
     ):
-        self.world_states: set[State] = world_states if world_states is not None else set()
+        self.world_states: set[State] = (
+            world_states if world_states is not None else set()
+        )
         self.actions: Final = actions if actions is not None else tuple(Action)
         self.no_go_coordinates: list[tuple[int, ...]] = self._get_no_go_coordinates()
-        self.reasonable_actions: dict[State, list[Action]] = self._get_reasonable_actions()
+        self.reasonable_actions: dict[
+            State, list[Action]
+        ] = self._get_reasonable_actions()
 
     def update_map(self, state: State, action: Action, new_state: State) -> None:
         """
@@ -34,15 +38,10 @@ class WorldMap:
         self.reasonable_actions = self._get_reasonable_actions()
 
     def _get_no_go_coordinates(self) -> list[tuple[int, ...]]:
-        return [
-            s.coordinates for s in self.world_states if s.kind in {"trap", "wall"}
-        ]
+        return [s.coordinates for s in self.world_states if s.kind in {"trap", "wall"}]
 
     def _get_reasonable_actions(self) -> dict[State, list[Action]]:
-        return {
-            s: self._get_actions_for_state(s)
-            for s in self.world_states
-        }
+        return {s: self._get_actions_for_state(s) for s in self.world_states}
 
     def _get_actions_for_state(self, s: State) -> list[Action]:
         """
