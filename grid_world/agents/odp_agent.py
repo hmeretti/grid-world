@@ -76,7 +76,8 @@ class ODPAgent:
         episode_rewards = []
 
         # run through the world while updating q the policy and our map as we go
-        while state.kind != "terminal":
+        effect = 0
+        while effect != 1:
             action = sample_action(self.policy, state, self.actions)
             new_state, effect = world.take_action(state, action)
             reward = self.reward_function(effect)
@@ -95,7 +96,6 @@ class ODPAgent:
             episode_actions.append(action)
             episode_states.append(state)
             episode_rewards.append(reward)
-
         # in case this wasn't a randon run, and we did not have to make path corrections we have found an optimal path
         self.optimal_path_found = self.final_state_known and perfect_run
 

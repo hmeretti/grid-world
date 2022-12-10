@@ -71,7 +71,8 @@ class QExplorerAgent:
         episode_rewards = []
 
         # run through the world while updating q the policy and our map as we go
-        while state.kind != "terminal":
+        effect = 0
+        while effect != 1:
             action = sample_action(self.policy, state, self.actions)
             new_state, effect = world.take_action(state, action)
             reward = self.reward_function(effect)
@@ -105,5 +106,4 @@ class QExplorerAgent:
             episode_actions.append(action)
             episode_states.append(state)
             episode_rewards.append(reward)
-
         return episode_actions, episode_states, episode_rewards
