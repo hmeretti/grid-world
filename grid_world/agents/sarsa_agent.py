@@ -75,7 +75,8 @@ class SarsaAgent:
 
         # run through the world while updating q and the policy as we go
         action = sample_action(self.policy, state, self.actions)
-        while state.kind != "terminal":
+        effect = 0
+        while effect != 1:
             new_state, effect = self.world.take_action(state, action)
             next_action = sample_action(self.policy, new_state, self.actions)
             reward = self.reward_function(effect)
