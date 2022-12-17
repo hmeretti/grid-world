@@ -74,17 +74,14 @@ def get_e_greedy_policy(
     :return: our epsilon greedy function
     """
     policy_map = {}
-    p_0 = epsilon / len(actions)
+    act_len = len(actions)
+    p_0 = epsilon / act_len
     for s in states:
         best_action = get_best_action_from_q(q, s, actions)
         for a in actions:
             policy_map[s, a] = p_0 + (1 - epsilon if a == best_action else 0)
 
-    return (
-        lambda cs, ca: policy_map[cs, ca]
-        if (cs, ca) in policy_map.keys()
-        else 1 / len(actions)
-    )
+    return lambda cs, ca: policy_map.get((cs, ca), 1 / act_len)
 
 
 def get_best_action_from_q(q: Q, s: State, actions: Collection[Action]) -> Action:

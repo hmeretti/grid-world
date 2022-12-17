@@ -2,6 +2,8 @@ import itertools
 
 import numpy as np
 
+from grid_world.utils.dacaying_functions import get_linear_decay
+
 
 # these are some useful functions for experimentation
 def get_results(base_agent, base_arguments, extra_parameters, training_rounds, episodes):
@@ -30,3 +32,9 @@ def get_exp_results(base_agent, base_arguments, arguments, episodes, training_ro
                        for values in itertools.product(*[arguments[x] for x in arguments])]
     return {f'{cur_args}': get_results(base_agent, base_arguments, cur_args,  training_rounds, episodes)
             for cur_args in blown_arguments}
+
+
+def moving_average(a, n) :
+    ret = np.cumsum(a, dtype=float)
+    ret[n:] = ret[n:] - ret[:-n]
+    return ret[n - 1:] / n

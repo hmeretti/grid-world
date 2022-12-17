@@ -1,4 +1,4 @@
-from typing import Final, Collection
+from typing import Final, Collection, Callable
 
 from grid_world.action import Action
 from grid_world.grid_world import GridWorld
@@ -22,6 +22,8 @@ class SarsaAgent:
         gamma: float = 1,
         alpha: float = 0.1,
         epsilon: float = 0.1,
+        epsilon_decay: Callable[[float], Callable[[float], float]] = lambda x: lambda y: x,
+        alpha_decay: Callable[[float], Callable[[float], float]] = lambda x: lambda y: x,
         q_0: Q = None,
     ):
         """
@@ -35,6 +37,8 @@ class SarsaAgent:
         :gamma: the gamma discount value to be used when calculating episode returns
         :alpha: learning rate
         :epsilon: exploration rate to be considered when building policies
+        :epsilon_decay: a rule to decay the epsilon parameter. Should be a function of epsilon, that returns another function, which will determine for each epoch the value of epsilon
+        :alpha_decay: a rule to decay the alpha parameter. Should be a function of epsilon, that returns another function, which will determine for each epoch the value of epsilon
         :q_0: initial estimates of state-action values, will be considered as a constant 0 if not provided
 
         """
@@ -45,6 +49,8 @@ class SarsaAgent:
         self.gamma = gamma
         self.alpha = alpha
         self.epsilon = epsilon
+        self.epsilon_decay = epsilon_decay(epsilon)
+        self.alpha_decay = alpha_decay(alpha)
         self.q: Q = (
             q_0
             if q_0 is not None
@@ -58,11 +64,13 @@ class SarsaAgent:
     ) -> tuple[list[int], list[float]]:
         episode_lengths = []
         episode_total_returns = []
-        for _ in range(episodes):
+        for episode in range(episodes):
             episode_actions, episode_states, episode_rewards = self.run_episode()
             episode_returns = returns_from_reward(episode_rewards, self.gamma)
             episode_lengths.append(len(episode_actions))
             episode_total_returns.append(episode_returns[0])
+            self.epsilon = self.epsilon_decay(episode)
+            self.alpha = self.alpha_decay(episode)
 
         return episode_lengths, episode_total_returns
 
