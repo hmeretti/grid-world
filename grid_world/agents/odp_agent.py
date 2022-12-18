@@ -2,7 +2,7 @@ from typing import Final, Collection
 
 from dynamic_programing.policy_improvement import dynamic_programing_gpi
 from grid_world.action import Action
-from grid_world.agents.world_map import WorldMap
+from grid_world.utils.world_map import WorldMap
 from grid_world.grid_world import GridWorld
 from grid_world.type_aliases import Policy, RewardFunction
 from grid_world.utils.policy import (

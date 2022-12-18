@@ -3,11 +3,10 @@ from typing import Final, Collection, Callable
 from grid_world.action import Action
 from grid_world.grid_world import GridWorld
 from grid_world.state import State
-from grid_world.type_aliases import Policy, RewardFunction, Q
+from grid_world.type_aliases import RewardFunction, Q, DecayFunction
 from grid_world.utils.policy import (
-    get_random_policy,
     sample_action,
-    get_e_greedy_policy, get_best_action_from_q,
+    get_best_action_from_q,
 )
 from grid_world.utils.returns import returns_from_reward
 
@@ -21,8 +20,8 @@ class SarsaAgent:
         gamma: float = 1,
         alpha: float = 0.1,
         epsilon: float = 0.1,
-        epsilon_decay: Callable[[float], Callable[[float], float]] = lambda x: lambda y: x,
-        alpha_decay: Callable[[float], Callable[[float], float]] = lambda x: lambda y: x,
+        epsilon_decay: DecayFunction = lambda x: lambda y: x,
+        alpha_decay: DecayFunction = lambda x: lambda y: x,
         q_0: Q = None,
     ):
         """
@@ -57,15 +56,19 @@ class SarsaAgent:
         self.policy_map: dict[[State, Action], float] = {}
 
         for x in self.visited_states:
-            self._update_policy_dict(x)
+            self._update_policy_map(x)
 
     def policy(self, state: State, action: Action) -> float:
-        return self.policy_map.get((state, action), 1/len(self.actions))
+        return self.policy_map.get((state, action), 1 / len(self.actions))
 
-    def _update_policy_dict(self, state: State) -> None:
+    def _update_policy_map(self, state: State) -> None:
         best_action = get_best_action_from_q(self.q, state, self.actions)
         for cur_a in self.actions:
-            self.policy_map[state, cur_a] = 1-self.epsilon if cur_a == best_action else self.epsilon/(len(self.actions) - 1)
+            self.policy_map[state, cur_a] = (
+                1 - self.epsilon
+                if cur_a == best_action
+                else self.epsilon / (len(self.actions) - 1)
+            )
 
     def train(
         self,
@@ -107,7 +110,7 @@ class SarsaAgent:
             )
 
             # improve from what was learned
-            self._update_policy_dict(state)
+            self._update_policy_map(state)
 
             state = new_state
             episode_actions.append(action)
