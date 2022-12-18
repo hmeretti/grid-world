@@ -34,8 +34,10 @@ class SarsaAgent:
         :gamma: the gamma discount value to be used when calculating episode returns
         :alpha: learning rate
         :epsilon: exploration rate to be considered when building policies
-        :epsilon_decay: a rule to decay the epsilon parameter. Should be a function of epsilon, that returns another function, which will determine for each epoch the value of epsilon
-        :alpha_decay: a rule to decay the alpha parameter. Should be a function of epsilon, that returns another function, which will determine for each epoch the value of epsilon
+        :epsilon_decay: a rule to decay the epsilon parameter. Should be a function of epsilon,
+            that returns another function, which will determine for each epoch the value of epsilon
+        :alpha_decay: a rule to decay the alpha parameter. Should be a function of epsilon,
+            that returns another function, which will determine for each epoch the value of epsilon
         :q_0: initial estimates of state-action values, will be considered as a constant 0 if not provided
 
         """
