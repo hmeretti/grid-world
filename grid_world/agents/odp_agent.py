@@ -2,7 +2,7 @@ from typing import Final, Collection
 
 from dynamic_programing.policy_improvement import dynamic_programing_gpi
 from grid_world.action import Action
-from grid_world.agents.world_map import WorldMap
+from grid_world.agents.commons.world_map import WorldMap
 from grid_world.grid_world import GridWorld
 from grid_world.type_aliases import Policy, RewardFunction
 from grid_world.utils.policy import (
@@ -58,21 +58,20 @@ class ODPAgent:
         episode_lengths = []
         episode_total_returns = []
         for _ in range(episodes):
-            episode_actions, episode_states, episode_rewards = self.run_episode(
-                world, verbose
-            )
+            episode_states, episode_rewards = self.run_episode(world, verbose)
             episode_returns = returns_from_reward(episode_rewards, self.gamma)
-            episode_lengths.append(len(episode_actions))
+            episode_lengths.append(len(episode_states))
             episode_total_returns.append(episode_returns[0])
 
         return episode_lengths, episode_total_returns
 
-    def run_episode(self, world: GridWorld, verbose: bool) -> [bool, int]:
+    def run_episode(
+        self, world: GridWorld, verbose: bool
+    ) -> tuple[list[float], list[float]]:
         state = world.initial_state
         perfect_run = True
 
         episode_states = [state]
-        episode_actions = []
         episode_rewards = []
 
         # run through the world while updating q the policy and our map as we go
@@ -93,7 +92,6 @@ class ODPAgent:
                 perfect_run = False
 
             state = new_state
-            episode_actions.append(action)
             episode_states.append(state)
             episode_rewards.append(reward)
         # in case this wasn't a randon run, and we did not have to make path corrections we have found an optimal path
@@ -104,7 +102,7 @@ class ODPAgent:
             self.policy = self._build_odp_policy(verbose)
             self.final_state_known = True
 
-        return episode_actions, episode_states, episode_rewards
+        return episode_states, episode_rewards
 
     def build_opt_world(self) -> GridWorld:
         return GridWorld(

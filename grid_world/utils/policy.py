@@ -2,8 +2,6 @@ from typing import Iterable, Collection
 
 import numpy as np
 
-from utils.operations import add_tuples
-
 from grid_world.action import Action
 from grid_world.grid_world import GridWorld
 from grid_world.state import State
@@ -74,20 +72,17 @@ def get_e_greedy_policy(
     :return: our epsilon greedy function
     """
     policy_map = {}
-    p_0 = epsilon / len(actions)
+    act_len = len(actions)
+    p_0 = epsilon / act_len
     for s in states:
-        best_action = get_best_action_from_q(q, s, actions)
+        best_action = get_best_action_from_dict(q, s, actions)
         for a in actions:
             policy_map[s, a] = p_0 + (1 - epsilon if a == best_action else 0)
 
-    return (
-        lambda cs, ca: policy_map[cs, ca]
-        if (cs, ca) in policy_map.keys()
-        else 1 / len(actions)
-    )
+    return lambda cs, ca: policy_map.get((cs, ca), 1 / act_len)
 
 
-def get_best_action_from_q(q: Q, s: State, actions: Collection[Action]) -> Action:
+def get_best_action_from_dict(q: Q, s: State, actions: Collection[Action]) -> Action:
     best_score = float("-inf")
     for a in actions:
         if (score := q.get((s, a), 0)) > best_score:
@@ -118,7 +113,9 @@ def get_explorer_policy(
     """
     policy_map = {}
     for s in world_map:
-        best_action = get_best_action_from_q(q, s, reasonable_actions.get(s, actions))
+        best_action = get_best_action_from_dict(
+            q, s, reasonable_actions.get(s, actions)
+        )
         p_0 = epsilon / len(reasonable_actions[s])
         for a in actions:
             policy_map[s, a] = (

@@ -4,7 +4,6 @@ from grid_world.action import Action
 from grid_world.state import State
 from grid_world.type_aliases import Effect
 
-# from grid_world.visualization.format_objects import get_world_str
 from utils.operations import add_tuples
 
 
