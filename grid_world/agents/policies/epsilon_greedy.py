@@ -28,7 +28,9 @@ class EpsilonGreedy(Policy):
     def __call__(self, state: State, action: Action) -> float:
         return self.policy_map.get((state, action), 1 / len(self.actions))
 
-    def update(self, state: State, best_action: Action, force_update: bool = False) -> None:
+    def update(
+        self, state: State, best_action: Action, force_update: bool = False
+    ) -> None:
         if (self.best_action.get(state) != best_action) or force_update:
             self.best_action[state] = best_action
             for cur_a in self.actions:

@@ -43,16 +43,14 @@ class SarsaAgent:
         self.actions: Final = actions
         self.gamma = gamma
         self.alpha = alpha
-        self.q: Q = (
-            q_0
-            if q_0 is not None
-            else {}
-        )
+        self.q: Q = q_0 if q_0 is not None else {}
         self.alpha_decay = alpha_decay if alpha_decay is not None else (lambda x: x)
         self.visited_states: set[State] = set(x for (x, a) in self.q.keys())
 
         for state in self.visited_states:
-            self.policy.update(state, get_best_action_from_dict(self.q, state, self.actions))
+            self.policy.update(
+                state, get_best_action_from_dict(self.q, state, self.actions)
+            )
 
     def train(
         self,
@@ -71,7 +69,9 @@ class SarsaAgent:
 
         return episode_lengths, episode_total_returns
 
-    def run_episode(self, world: GridWorld, initial_state: State = None) -> tuple[list[float], list[float]]:
+    def run_episode(
+        self, world: GridWorld, initial_state: State = None
+    ) -> tuple[list[float], list[float]]:
         state = initial_state if initial_state is not None else world.initial_state
 
         episode_states = [state]
@@ -94,7 +94,9 @@ class SarsaAgent:
             )
 
             # improve from what was learned
-            self.policy.update(state, get_best_action_from_dict(self.q, state, self.actions))
+            self.policy.update(
+                state, get_best_action_from_dict(self.q, state, self.actions)
+            )
 
             state = new_state
             episode_states.append(state)

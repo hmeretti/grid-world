@@ -49,11 +49,7 @@ class LambdaSarsaAgent:
         self.epsilon = epsilon
         self.et_lambda = et_lambda
         self.et_kind = et_kind
-        self.q: Q = (
-            q_0
-            if q_0 is not None
-            else {}
-        )
+        self.q: Q = q_0 if q_0 is not None else {}
         self.epsilon_decay = epsilon_decay(epsilon)
         self.alpha_decay = alpha_decay(alpha)
         self.visited_states: set[State] = set(x for (x, a) in self.q.keys())
@@ -91,7 +87,9 @@ class LambdaSarsaAgent:
 
         return episode_lengths, episode_total_returns
 
-    def run_episode(self, world: GridWorld, initial_state: State = None) -> tuple[list[float], list[float]]:
+    def run_episode(
+        self, world: GridWorld, initial_state: State = None
+    ) -> tuple[list[float], list[float]]:
         eligibility_trace = EligibilityTrace(
             et_lambda=self.et_lambda, gamma=self.gamma, kind=self.et_kind
         )

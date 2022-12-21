@@ -58,16 +58,16 @@ class ODPAgent:
         episode_lengths = []
         episode_total_returns = []
         for _ in range(episodes):
-            episode_states, episode_rewards = self.run_episode(
-                world, verbose
-            )
+            episode_states, episode_rewards = self.run_episode(world, verbose)
             episode_returns = returns_from_reward(episode_rewards, self.gamma)
             episode_lengths.append(len(episode_states))
             episode_total_returns.append(episode_returns[0])
 
         return episode_lengths, episode_total_returns
 
-    def run_episode(self, world: GridWorld, verbose: bool) -> tuple[list[float], list[float]]:
+    def run_episode(
+        self, world: GridWorld, verbose: bool
+    ) -> tuple[list[float], list[float]]:
         state = world.initial_state
         perfect_run = True
 

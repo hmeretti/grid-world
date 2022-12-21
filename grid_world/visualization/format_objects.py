@@ -43,7 +43,9 @@ def get_policy_eval_str(v: EvalFunction, world: GridWorld) -> str:
     return dict_str
 
 
-def get_world_str(world: GridWorld, agent_position: State = None, show_coordinates: bool = True) -> str:
+def get_world_str(
+    world: GridWorld, agent_position: State = None, show_coordinates: bool = True
+) -> str:
     """
     creates a string visualization of an world and agent
 

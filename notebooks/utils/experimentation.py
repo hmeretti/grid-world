@@ -5,15 +5,17 @@ import pandas as pd
 
 
 def print_summary(results):
-    average_rewards_l10 = {key: (np.mean(results[key][0][-10:]))for key in results}
-    average_rewards = {key: (np.mean(results[key][0]))for key in results}
+    average_rewards_l10 = {key: (np.mean(results[key][0][-10:])) for key in results}
+    average_rewards = {key: (np.mean(results[key][0])) for key in results}
 
     print("Average reward on rounds")
-    for k, v in sorted(average_rewards.items(), key=lambda item: item[1], reverse = True):
+    for k, v in sorted(average_rewards.items(), key=lambda item: item[1], reverse=True):
         print(f"{k}: {v:.2f}")
 
     print("\nAverage reward on last 10 episodes")
-    for k, v in sorted(average_rewards_l10.items(), key=lambda item: item[1],  reverse = True):
+    for k, v in sorted(
+        average_rewards_l10.items(), key=lambda item: item[1], reverse=True
+    ):
         print(f"{k}: {v:.2f}")
 
 
@@ -36,33 +38,51 @@ def get_results(
     return returns, lengths
 
 
-def get_exp_results(base_agent, world, base_arguments, arguments, episodes, training_rounds):
+def get_exp_results(
+    base_agent, world, base_arguments, arguments, episodes, training_rounds
+):
     blown_arguments = [
         {key: values[idx] for idx, key in enumerate(arguments)}
         for values in itertools.product(*[arguments[x] for x in arguments])
     ]
     return [
-        (cur_args, get_results(
-            base_agent, world, base_arguments, cur_args, training_rounds, episodes
-        ))
+        (
+            cur_args,
+            get_results(
+                base_agent, world, base_arguments, cur_args, training_rounds, episodes
+            ),
+        )
         for cur_args in blown_arguments
     ]
 
 
 def get_summary_df(results, final_episodes=10):
-    data = [[
-        params['alpha'],
-        params['epsilon'],
-        np.mean(np.sum(np.array(values[0]), axis=1)),
-        np.std(np.sum(np.array(values[0]), axis=1)),
-        np.average(np.array(values[0])[:, -final_episodes:]),
-        np.std(np.array(values[0])[:, -final_episodes:]),
-        np.min(np.array(values[1]))
-    ] for (params, values) in results]
+    data = [
+        [
+            params["alpha"],
+            params["epsilon"],
+            np.mean(np.sum(np.array(values[0]), axis=1)),
+            np.std(np.sum(np.array(values[0]), axis=1)),
+            np.average(np.array(values[0])[:, -final_episodes:]),
+            np.std(np.array(values[0])[:, -final_episodes:]),
+            np.min(np.array(values[1])),
+        ]
+        for (params, values) in results
+    ]
 
     return pd.DataFrame(
-        data, columns = ['alpha', 'epsilon', 'average_round_reward', 'std_round_reward', 'average_reward_final_10', 'std_reward_final_10', 'shortest_run']
-    ).sort_values(by=['average_round_reward'], ascending=False)
+        data,
+        columns=[
+            "alpha",
+            "epsilon",
+            "average_round_reward",
+            "std_round_reward",
+            "average_reward_final_10",
+            "std_reward_final_10",
+            "shortest_run",
+        ],
+    ).sort_values(by=["average_round_reward"], ascending=False)
+
 
 def moving_average(a, n):
     ret = np.cumsum(a, dtype=float)

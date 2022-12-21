@@ -113,7 +113,9 @@ def get_explorer_policy(
     """
     policy_map = {}
     for s in world_map:
-        best_action = get_best_action_from_dict(q, s, reasonable_actions.get(s, actions))
+        best_action = get_best_action_from_dict(
+            q, s, reasonable_actions.get(s, actions)
+        )
         p_0 = epsilon / len(reasonable_actions[s])
         for a in actions:
             policy_map[s, a] = (

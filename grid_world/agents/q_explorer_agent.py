@@ -46,12 +46,10 @@ class QExplorerAgent:
         self.gamma = gamma
         self.alpha = alpha
         self.epsilon = epsilon
-        self.q: Q = (
-            q_0
-            if q_0 is not None
-            else {}
+        self.q: Q = q_0 if q_0 is not None else {}
+        self.world_map: WorldMap = WorldMap(
+            world_states=set(x for (x, a) in self.q.keys()), actions=self.actions
         )
-        self.world_map: WorldMap = WorldMap(world_states=set(x for (x, a) in self.q.keys()), actions=self.actions)
         self.policy_map: dict[[State, Action], float] = {}
 
     def train(
@@ -69,7 +67,9 @@ class QExplorerAgent:
 
         return episode_lengths, episode_total_returns
 
-    def run_episode(self, world: GridWorld, initial_state: State = None) -> tuple[list[float], list[float]]:
+    def run_episode(
+        self, world: GridWorld, initial_state: State = None
+    ) -> tuple[list[float], list[float]]:
         state = initial_state if initial_state is not None else world.initial_state
 
         episode_states = [state]
