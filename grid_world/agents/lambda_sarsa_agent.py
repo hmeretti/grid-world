@@ -98,7 +98,7 @@ class LambdaSarsaAgent:
         episode_states = [state]
         episode_rewards = []
 
-        # run through the world while updating q, eligibility trace, and the policy.py as we go
+        # run through the world while updating q, eligibility trace, and the policy as we go
         action = sample_action(self.policy, state, self.actions)
         effect = 0
         while effect != 1:

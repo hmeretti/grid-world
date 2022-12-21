@@ -25,8 +25,8 @@ class QExplorerAgent:
         q_0: Q = None,
     ):
         """
-        Agent very similar to q-learning, that uses an improved exploration policy.py. The agent uses the same method
-        as q-learning to update its Q function, however it uses a different exploration policy.py, more suited to this
+        Agent very similar to q-learning, that uses an improved exploration policy. The agent uses the same method
+        as q-learning to update its Q function, however it uses a different exploration policy, more suited to this
         specific problem. It does so by keeping track of a world map, and ignoring actions that are surely bad when
         doing exploration(hitting walls or traps).
 
@@ -34,7 +34,7 @@ class QExplorerAgent:
 
         :reward_function: the reward function we are trying to maximize
         :actions: actions available to the agent
-        :policy.py: initial policy.py for the agent
+        :policy: initial policy for the agent
         :gamma: the gamma discount value to be used when calculating episode returns
         :alpha: learning rate
         :epsilon: exploration rate to be considered when building policies
@@ -75,7 +75,7 @@ class QExplorerAgent:
         episode_states = [state]
         episode_rewards = []
 
-        # run through the world while updating q the policy.py and our map as we go
+        # run through the world while updating q the policy and our map as we go
         effect = 0
         while effect != 1:
             action = sample_action(self.policy, state, self.actions)

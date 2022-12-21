@@ -12,13 +12,13 @@ def get_policy_rec(
     pi: Policy, world: GridWorld, actions: Iterable[Action]
 ) -> PolicyRec:
     """
-    Generate a function  that tells for each state the action which the policy.py consider the "best"(the
+    Generate a function  that tells for each state the action which the policy consider the "best"(the
     one it recommends the agent to take more often)
 
-    :param pi: a policy.py, i.e. a function that tells for each state action pair, how likely we should take it
-    :param world: the world to which this policy.py applies
-    :param actions: available actions to which this policy.py applies
-    :return: a functions that tells for each state the action which the policy.py consider the "best"(the
+    :param pi: a policy, i.e. a function that tells for each state action pair, how likely we should take it
+    :param world: the world to which this policy applies
+    :param actions: available actions to which this policy applies
+    :return: a functions that tells for each state the action which the policy consider the "best"(the
     one it recommends the agent to take more often)
     """
     if actions is None:
@@ -37,11 +37,11 @@ def get_policy_rec(
 
 def get_random_policy(actions: Collection[Action]) -> Policy:
     """
-    Builds a random uniform policy.py over a set of actions
+    Builds a random uniform policy over a set of actions
 
     :param actions: Collection of allowed actions over a state, this is
     assumed to be the same for every state
-    :return: the random uniform policy.py
+    :return: the random uniform policy
     """
     return lambda s, a: 1 / len(actions)
 
@@ -54,19 +54,19 @@ def sample_action(policy: Policy, state: State, actions: Collection[Action]) -> 
         if n0 <= cum_sum:
             return action
 
-    raise ValueError("policy.py does not add to 1 over actions")
+    raise ValueError("policy does not add to 1 over actions")
 
 
 def get_e_greedy_policy(
     q: Q, states: Collection[State], actions: Collection[Action], epsilon: float = 0.1
 ):
     """
-    This creates an epsilon greedy policy.py for a Q function. Where we select the prefered
+    This creates an epsilon greedy policy for a Q function. Where we select the prefered
     action 1 - epsilon times, and the rest we select an action at random uniformly.
-    This policy.py will behave as the uniform random policy.py for states not listed.
+    This policy will behave as the uniform random policy for states not listed.
 
     :param q: the Q function
-    :param states: a list of states to make our policy.py greed at
+    :param states: a list of states to make our policy greed at
     :param actions: possible actions to be considered
     :param epsilon: the parameter that names the function
     :return: our epsilon greedy function
@@ -99,7 +99,7 @@ def get_explorer_policy(
     epsilon: float = 0.1,
 ):
     """
-    This creates a policy.py similar to epsilon greedy. However, it uses a partial map of the world, and
+    This creates a policy similar to epsilon greedy. However, it uses a partial map of the world, and
     a list of reasonable actions to take at each state to avoid making simple mistakes,
     like hitting walls and falling into traps. The reasonable actions parameter is responsible for deciding
     what the police allows or not.

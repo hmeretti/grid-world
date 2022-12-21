@@ -25,9 +25,9 @@ class ODPAgent:
         Agent implementing a solution based on dynamic programing.
 
         This agent goes through the world, keeping a map, and "planning" its routes using DP. It starts with a
-        random policy.py, that will eventually lead it to the goal. Once it has found the goal, it builds an "optimistic"
+        random policy, that will eventually lead it to the goal. Once it has found the goal, it builds an "optimistic"
         model of the world(one where every unexplored state is empty, which for our problem is the case that would lead
-        to the best possible solution) and uses DP to find the best policy.py in such a world. It repeats this
+        to the best possible solution) and uses DP to find the best policy in such a world. It repeats this
         process whenever the optimistic assumption of the world leads to a mistake(hitting a wall or a trap).
 
         We treat the agent as if it doesn't know anything about the world it will explore. For this reason  dimensions
@@ -74,7 +74,7 @@ class ODPAgent:
         episode_states = [state]
         episode_rewards = []
 
-        # run through the world while updating q the policy.py and our map as we go
+        # run through the world while updating q the policy and our map as we go
         effect = 0
         while effect != 1:
             action = sample_action(self.policy, state, self.actions)
@@ -84,7 +84,7 @@ class ODPAgent:
             # update our map based on what happened
             self.world_map.update_map(state, action, new_state)
 
-            # in case we already know the final state, and we hit a wall or trap we need to update the policy.py
+            # in case we already know the final state, and we hit a wall or trap we need to update the policy
             if self.final_state_known and (
                 new_state == state or new_state.kind == "trap"
             ):

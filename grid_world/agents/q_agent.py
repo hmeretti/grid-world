@@ -27,7 +27,7 @@ class QAgent:
     ):
         """
         Agent implementing a solution based on estimating the value of state-action pairs. It updates values after
-        every action, by observing results and bootstrapping values from what is expected to be the best policy.py
+        every action, by observing results and bootstrapping values from what is expected to be the best policy
         for the following state.
 
         :reward_function: the reward function we are trying to maximize
