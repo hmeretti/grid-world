@@ -30,7 +30,7 @@ class MonteCarloAgent:
         :world: the world this agent will explore
         :reward_function: the reward function we are trying to maximize
         :actions: actions available to the agent
-        :policy: initial policy for the agent
+        :policy.py: initial policy.py for the agent
         :gamma: the gamma discount value to be used when calculating episode returns
         :epsilon: exploration rate to be considered when building policies
         :q_0: initial estimates of state-action values, will be considered as a constant 0 if not provided
@@ -79,7 +79,7 @@ class MonteCarloAgent:
         episode_actions = []
         episode_rewards = []
 
-        # run through the world using policy
+        # run through the world using policy.py
         for _ in range(max_steps):
             action = sample_action(self.policy, state, self.actions)
             state, effect = self.world.take_action(state, action)

@@ -2,7 +2,7 @@ from typing import Final, Collection
 
 from dynamic_programing.policy_improvement import dynamic_programing_gpi
 from grid_world.action import Action
-from grid_world.utils.world_map import WorldMap
+from grid_world.agents.commons.world_map import WorldMap
 from grid_world.grid_world import GridWorld
 from grid_world.type_aliases import Policy, RewardFunction
 from grid_world.utils.policy import (
@@ -25,9 +25,9 @@ class ODPAgent:
         Agent implementing a solution based on dynamic programing.
 
         This agent goes through the world, keeping a map, and "planning" its routes using DP. It starts with a
-        random policy, that will eventually lead it to the goal. Once it has found the goal, it builds an "optimistic"
+        random policy.py, that will eventually lead it to the goal. Once it has found the goal, it builds an "optimistic"
         model of the world(one where every unexplored state is empty, which for our problem is the case that would lead
-        to the best possible solution) and uses DP to find the best policy in such a world. It repeats this
+        to the best possible solution) and uses DP to find the best policy.py in such a world. It repeats this
         process whenever the optimistic assumption of the world leads to a mistake(hitting a wall or a trap).
 
         We treat the agent as if it doesn't know anything about the world it will explore. For this reason  dimensions
@@ -58,24 +58,23 @@ class ODPAgent:
         episode_lengths = []
         episode_total_returns = []
         for _ in range(episodes):
-            episode_actions, episode_states, episode_rewards = self.run_episode(
+            episode_states, episode_rewards = self.run_episode(
                 world, verbose
             )
             episode_returns = returns_from_reward(episode_rewards, self.gamma)
-            episode_lengths.append(len(episode_actions))
+            episode_lengths.append(len(episode_states))
             episode_total_returns.append(episode_returns[0])
 
         return episode_lengths, episode_total_returns
 
-    def run_episode(self, world: GridWorld, verbose: bool) -> [bool, int]:
+    def run_episode(self, world: GridWorld, verbose: bool) -> tuple[list[float], list[float]]:
         state = world.initial_state
         perfect_run = True
 
         episode_states = [state]
-        episode_actions = []
         episode_rewards = []
 
-        # run through the world while updating q the policy and our map as we go
+        # run through the world while updating q the policy.py and our map as we go
         effect = 0
         while effect != 1:
             action = sample_action(self.policy, state, self.actions)
@@ -85,7 +84,7 @@ class ODPAgent:
             # update our map based on what happened
             self.world_map.update_map(state, action, new_state)
 
-            # in case we already know the final state, and we hit a wall or trap we need to update the policy
+            # in case we already know the final state, and we hit a wall or trap we need to update the policy.py
             if self.final_state_known and (
                 new_state == state or new_state.kind == "trap"
             ):
@@ -93,7 +92,6 @@ class ODPAgent:
                 perfect_run = False
 
             state = new_state
-            episode_actions.append(action)
             episode_states.append(state)
             episode_rewards.append(reward)
         # in case this wasn't a randon run, and we did not have to make path corrections we have found an optimal path
@@ -104,7 +102,7 @@ class ODPAgent:
             self.policy = self._build_odp_policy(verbose)
             self.final_state_known = True
 
-        return episode_actions, episode_states, episode_rewards
+        return episode_states, episode_rewards
 
     def build_opt_world(self) -> GridWorld:
         return GridWorld(

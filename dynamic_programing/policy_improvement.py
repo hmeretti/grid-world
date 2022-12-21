@@ -45,9 +45,9 @@ def get_greedy_policy(
     states: Collection[State],
 ) -> Policy:
     """
-    Creates a greed policy with respect to an evaluation function. Since this function only
+    Creates a greed policy.py with respect to an evaluation function. Since this function only
     takes into account states and not actions(its the V not the q from the literature), we
-    still need the world model and reward function to create this policy.
+    still need the world model and reward function to create this policy.py.
 
     :param v: the evaluation function to "greedify" over
     :param world_model: dynamics model of the world. A function of states actions, that returns
@@ -55,7 +55,7 @@ def get_greedy_policy(
     :param reward_function: the reward for taking an action in a given state
     :param actions: all possible action
     :param states: all possible states
-    :return: the greedy policy
+    :return: the greedy policy.py
     """
     gpr = {
         s: _argmax_q(s, v, world_model, reward_function, actions, states)
@@ -86,18 +86,18 @@ def dynamic_programing_gpi(
     verbose: bool = False,
 ) -> [Policy, EvalFunction]:
     """
-    General policy improvement algorithm using dynamic programing.
+    General policy.py improvement algorithm using dynamic programing.
 
     :param world_model: dynamics model of the world. A function of states actions, that returns
         the probability distribution of landing in a new state.
     :param reward_function: the reward for taking an action in a given state
     :param actions: all possible actions
     :param states: all possible states
-    :param pi: an initial policy, will user random uniform if none is passed
-    :param max_epochs: max number of policy iterations to run(will stop early if the value
+    :param pi: an initial policy.py, will user random uniform if none is passed
+    :param max_epochs: max number of policy.py iterations to run(will stop early if the value
         function converges)
     :param verbose: whether we should print additional information or not
-    :return: the optimal policy and its value function
+    :return: the optimal policy.py and its value function
     """
 
     if pi is None:
@@ -115,7 +115,7 @@ def dynamic_programing_gpi(
 
         if float_dict_comparison(v_pi, v_pi_0):
             if verbose:
-                print(f"policy converged in {i} epochs")
+                print(f"policy.py converged in {i} epochs")
             break
 
     return pi, v_pi

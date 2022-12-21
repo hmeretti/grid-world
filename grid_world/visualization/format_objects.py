@@ -43,17 +43,19 @@ def get_policy_eval_str(v: EvalFunction, world: GridWorld) -> str:
     return dict_str
 
 
-def get_world_str(world: GridWorld, agent_position: State = None) -> str:
+def get_world_str(world: GridWorld, agent_position: State = None, show_coordinates: bool = True) -> str:
     """
     creates a string visualization of an world and agent
 
     :param world: the world to be represented
     :param agent_position: position of agent in the world
+    :param show_coordinates: show coordinates under axes, may break for large worlds
     :return: string visualization of the world
     """
     world_str = ""
     for i in reversed(range(world.grid_shape[0])):
-        world_str += f"{i}"
+        if show_coordinates:
+            world_str += f"{i}"
         for j in range(world.grid_shape[1]):
             if (i, j) == agent_position:
                 cur_char = states_symbols["agent"]
@@ -65,6 +67,7 @@ def get_world_str(world: GridWorld, agent_position: State = None) -> str:
 
             world_str += f" {cur_char} "
         world_str += f"\n\n"
-    world_str += " " + "".join([f" {j} " for j in range(world.grid_shape[1])])
+    if show_coordinates:
+        world_str += " " + "".join([f" {j} " for j in range(world.grid_shape[1])])
 
     return world_str

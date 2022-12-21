@@ -62,20 +62,20 @@ def iterative_policy_evaluation(
     epsilon: float = 0.01,
 ) -> EvalFunction:
     """
-    Function to create evaluation of policy. That is a mapping from states to the estimated
-    accumulated discounted reward from that state, when following policy pi.
+    Function to create evaluation of policy.py. That is a mapping from states to the estimated
+    accumulated discounted reward from that state, when following policy.py pi.
 
-    :param pi: policy to be evaluated
+    :param pi: policy.py to be evaluated
     :param world_model: dynamics model of the world. A function of states actions, that returns
         the probability distribution of landing in a new state.
     :param reward_function: the reward for taking an action in a given state
     :param actions: all possible actions
     :param states: all possible states
-    :param v0: initial policy to iterate over
+    :param v0: initial policy.py to iterate over
     :param gamma: discount factor for rewards
     :param epsilon: stop criteria. Iteration will stop whenever the maximum change on a state
         evaluation is lower then this
-    :return: the evaluation of policy pi
+    :return: the evaluation of policy.py pi
     """
     v = {a: 0 for a in states} if v0 is None else v0.copy()
 
