@@ -1,6 +1,7 @@
 from typing import Final, Collection
 
 from grid_world.action import Action
+from grid_world.agents.agent import Agent
 from grid_world.agents.policies.epsilon_greedy import EpsilonGreedy
 from grid_world.grid_world import GridWorld
 from grid_world.state import State
@@ -13,7 +14,7 @@ from grid_world.utils.policy import (
 from grid_world.utils.returns import returns_from_reward
 
 
-class QAgent:
+class QAgent(Agent):
     def __init__(
         self,
         reward_function: RewardFunction,

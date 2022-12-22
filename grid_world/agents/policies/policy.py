@@ -13,7 +13,7 @@ class Policy:
     """
 
     def __call__(self, state: State, action: Action) -> float:
-        raise NotImplementedError("Call magic method not implemented")
+        raise NotImplementedError("__call__ method not implemented")
 
     def update(self, *args: Any) -> None:
-        raise NotImplementedError("Update method not implemented")
+        raise NotImplementedError("update method not implemented")

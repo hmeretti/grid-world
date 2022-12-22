@@ -5,6 +5,8 @@ reinforcement learnig. This is intended as a study on how to implement such meth
 and to provide a simple experimentation setup. It is by no means intended as a general efficient implementation.
 Every thing here is heavily based on the book ["Reinforcement Learning: An Introduction"](https://web.stanford.edu/class/psych209/Readings/SuttonBartoIPRLBook2ndEd.pdf) from Richard S. Sutton and Andrew G. Barto(which is really great by the way).
 
+For a quick overview of the problem and notation I recommend checking the "intro.ipynb" notebook on the root folder of this project.
+
 ## Setting local environment
 
 If you have pyenv installed just run the following inside the base dir:
