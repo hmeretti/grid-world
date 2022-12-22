@@ -2,7 +2,7 @@ from grid_world.grid_world import GridWorld
 
 
 # these are some worlds we will use often
-small_world_01 = GridWorld(
+points = GridWorld(
     grid_shape=(4, 5),
     terminal_states_coordinates=((0, 4),),
     walls_coordinates=((0, 1), (1, 1), (2, 3)),
