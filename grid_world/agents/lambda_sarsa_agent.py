@@ -50,8 +50,8 @@ class LambdaSarsaAgent:
         self.et_lambda = et_lambda
         self.et_kind = et_kind
         self.q: Q = q_0 if q_0 is not None else {}
-        self.epsilon_decay = epsilon_decay(epsilon)
-        self.alpha_decay = alpha_decay(alpha)
+        self.epsilon_decay = epsilon_decay
+        self.alpha_decay = alpha_decay
         self.visited_states: set[State] = set(x for (x, a) in self.q.keys())
         self.policy_map: dict[[State, Action], float] = {}
 
@@ -78,7 +78,7 @@ class LambdaSarsaAgent:
         episode_lengths = []
         episode_total_returns = []
         for episode in range(episodes):
-            episode_states, episode_rewards = self.run_episode(world)
+            episode_states, episode_rewards, _ = self.run_episode(world)
             episode_returns = returns_from_reward(episode_rewards, self.gamma)
             episode_lengths.append(len(episode_states))
             episode_total_returns.append(episode_returns[0])
@@ -89,17 +89,18 @@ class LambdaSarsaAgent:
 
     def run_episode(
         self, world: GridWorld, initial_state: State = None
-    ) -> tuple[list[float], list[float]]:
+    ) -> tuple[list[State], list[float], list[Action]]:
         eligibility_trace = EligibilityTrace(
             et_lambda=self.et_lambda, gamma=self.gamma, kind=self.et_kind
         )
         state = initial_state if initial_state is not None else world.initial_state
+        action = sample_action(self.policy, state, self.actions)
 
-        episode_states = [state]
+        episode_states = []
         episode_rewards = []
+        episode_actions = []
 
         # run through the world while updating q, eligibility trace, and the policy as we go
-        action = sample_action(self.policy, state, self.actions)
         effect = 0
         while effect != 1:
             eligibility_trace.update(state, action)
@@ -123,9 +124,11 @@ class LambdaSarsaAgent:
             # improve from what was learned
             self._update_policy_map(state)
 
-            state = new_state
             episode_states.append(state)
             episode_rewards.append(reward)
+            episode_actions.append(action)
+
+            state = new_state
             action = next_action
 
-        return episode_states, episode_rewards
+        return episode_states, episode_rewards, episode_actions

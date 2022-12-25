@@ -22,5 +22,5 @@ class Agent:
 
     def run_episode(
             self, world: GridWorld, initial_state: State
-    ) -> tuple[list[float], list[float]]:
+    ) -> tuple[list[State], list[float], list[Action]]:
         raise NotImplementedError("run_episode method not implemented")

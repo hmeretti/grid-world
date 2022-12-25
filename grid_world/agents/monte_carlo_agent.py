@@ -60,7 +60,7 @@ class MonteCarloAgent(Agent):
         episode_lengths = []
         episode_total_returns = []
         while i < episodes:
-            episode_states, episode_rewards = self.run_episode(world)
+            episode_states, episode_rewards, _ = self.run_episode(world)
             if self.episode_terminated:
                 episode_returns = returns_from_reward(episode_rewards, self.gamma)
                 episode_lengths.append(len(episode_states))
@@ -72,11 +72,11 @@ class MonteCarloAgent(Agent):
 
     def run_episode(
         self, world: GridWorld, initial_state: State = None
-    ) -> tuple[list[float], list[float]]:
+    ) -> tuple[list[State], list[float], list[Action]]:
         state = initial_state if initial_state is not None else world.initial_state
 
         self.episode_terminated = False
-        episode_states = [state]
+        episode_states = []
         episode_actions = []
         episode_rewards = []
 
@@ -96,7 +96,7 @@ class MonteCarloAgent(Agent):
 
         # if episode didn't terminate we can't learn anything
         if not self.episode_terminated:
-            return [], []
+            return [], [], []
 
         self._update_visited_states(episode_states)
 
@@ -111,7 +111,7 @@ class MonteCarloAgent(Agent):
                 cur_state, get_best_action_from_dict(self.q, state, self.actions)
             )
 
-        return episode_states, episode_rewards
+        return episode_states, episode_rewards, episode_actions
 
     def _update_visited_states(self, episode_states: Collection[State]):
         self.visited_states = self.visited_states.union(set(episode_states))

@@ -44,7 +44,7 @@ def get_policy_eval_str(v: EvalFunction, world: GridWorld) -> str:
 
 
 def get_world_str(
-    world: GridWorld, agent_position: State = None, show_coordinates: bool = True
+    world: GridWorld, agent_position: tuple[int, int] = None, show_coordinates: bool = True
 ) -> str:
     """
     creates a string visualization of an world and agent
@@ -73,3 +73,36 @@ def get_world_str(
         world_str += " " + "".join([f" {i} " for i in range(world.grid_shape[0])])
 
     return world_str
+
+
+def get_world_str_lines(
+    world: GridWorld, agent_position: tuple[int, int] = None, show_coordinates: bool = False
+) -> list[str]:
+    """
+    creates a line by line string visualization of an world and agent. Useful for animations with curses
+
+    :param world: the world to be represented
+    :param agent_position: position of agent in the world
+    :param show_coordinates: show coordinates under axes, may break for large worlds
+    :return: string visualization of the world
+    """
+    lines = []
+    for j in reversed(range(world.grid_shape[1])):
+        line_str = ""
+        if show_coordinates:
+            line_str += f"{j}"
+        for i in range(world.grid_shape[0]):
+            if (i, j) == agent_position:
+                cur_char = states_symbols["agent"]
+            elif (i, j) in world.walls_coordinates:
+                cur_char = states_symbols["wall"]
+            else:
+                cur_state = world.get_state((i, j))
+                cur_char = cur_state.get_unicode()
+
+            line_str += f"{cur_char}"
+        lines.append(line_str)
+    if show_coordinates:
+        lines.append(" " + "".join([f" {i} " for i in range(world.grid_shape[0])]))
+
+    return lines
