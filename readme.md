@@ -1,6 +1,6 @@
 # WIP
 
-Still working on lots of functionalities; things are changing a lot. Some agents are probably currently not working.
+Still a very preliminary version; working on lots of functionalities and things change a lot. Some agents are probably currently not working.
 
 ## Intro
 
