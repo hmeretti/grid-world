@@ -2,7 +2,7 @@ import sys
 import os
 
 path = os.path.dirname(os.path.abspath(__file__))
-sys.path.append("/"+os.path.join(*path.split('/')[:-3]))
+sys.path.append("/" + os.path.join(*path.split("/")[:-3]))
 
 from grid_world.agents.sarsa_agent import SarsaAgent
 from grid_world.visualization.curses_utils import animate_episodes

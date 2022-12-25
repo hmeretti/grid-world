@@ -20,19 +20,30 @@ def animate_episodes(
     console = curses.initscr()
     cursor.hide()
 
-    for episode in (episodes_to_animate if episodes_to_animate is not None else range(len(states_history))):
+    for episode in (
+        episodes_to_animate
+        if episodes_to_animate is not None
+        else range(len(states_history))
+    ):
         console.clrtobot()
         draw_world(world, console)
         states = states_history[episode]
         for step, s in enumerate(states):
-            draw_point(*coordinates_to_drawing_position(*s.coordinates, world.grid_shape), console)
-            draw_line(f'episode: {episode}', world.grid_shape[1], console)
-            draw_line(f'step: {step}', world.grid_shape[1] + 1, console)
-            draw_line(f'action: {actions_history[episode][step].unicode}', world.grid_shape[1] + 2, console)
+            draw_point(
+                *coordinates_to_drawing_position(*s.coordinates, world.grid_shape),
+                console,
+            )
+            draw_line(f"episode: {episode}", world.grid_shape[1], console)
+            draw_line(f"step: {step}", world.grid_shape[1] + 1, console)
+            draw_line(
+                f"action: {actions_history[episode][step].unicode}",
+                world.grid_shape[1] + 2,
+                console,
+            )
             time.sleep(sleep_time)
             restore_world_coordinate(*s.coordinates, world, console)
 
-    time.sleep(3*sleep_time)
+    time.sleep(3 * sleep_time)
     cursor.show()
     curses.endwin()
 
@@ -55,8 +66,12 @@ def draw_point(x, y, console, char=states_symbols["agent"]):
 
 
 def coordinates_to_drawing_position(x, y, grid_shape):
-    return grid_shape[1] - y - 1, 3*x
+    return grid_shape[1] - y - 1, 3 * x
 
 
 def restore_world_coordinate(x, y, world, console):
-    draw_point(*coordinates_to_drawing_position(x, y, world.grid_shape), console, world.get_state((x, y)).get_unicode())
+    draw_point(
+        *coordinates_to_drawing_position(x, y, world.grid_shape),
+        console,
+        world.get_state((x, y)).get_unicode(),
+    )

@@ -44,7 +44,9 @@ def get_policy_eval_str(v: EvalFunction, world: GridWorld) -> str:
 
 
 def get_world_str(
-    world: GridWorld, agent_position: tuple[int, int] = None, show_coordinates: bool = True
+    world: GridWorld,
+    agent_position: tuple[int, int] = None,
+    show_coordinates: bool = True,
 ) -> str:
     """
     creates a string visualization of an world and agent
@@ -76,7 +78,9 @@ def get_world_str(
 
 
 def get_world_str_lines(
-    world: GridWorld, agent_position: tuple[int, int] = None, show_coordinates: bool = False
+    world: GridWorld,
+    agent_position: tuple[int, int] = None,
+    show_coordinates: bool = False,
 ) -> list[str]:
     """
     creates a line by line string visualization of an world and agent. Useful for animations with curses

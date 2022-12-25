@@ -21,6 +21,6 @@ class Agent:
         raise NotImplementedError("train method not implemented")
 
     def run_episode(
-            self, world: GridWorld, initial_state: State
+        self, world: GridWorld, initial_state: State
     ) -> tuple[list[State], list[float], list[Action]]:
         raise NotImplementedError("run_episode method not implemented")
