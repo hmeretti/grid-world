@@ -41,11 +41,7 @@ class MonteCarloAgent(Agent):
         self.policy: EpsilonGreedy = EpsilonGreedy(epsilon, actions, epsilon_decay)
         self.gamma = gamma
         self.max_steps = max_steps
-        self.q: Q = (
-            q_0
-            if q_0 is not None
-            else {}
-        )
+        self.q: Q = q_0 if q_0 is not None else {}
         self.u: dict[tuple[State, Action], int] = {}
         self.episode_terminated: bool = False
         self.visited_states: set[State] = set(x for (x, a) in self.q.keys())
@@ -55,12 +51,14 @@ class MonteCarloAgent(Agent):
                 state, get_best_action_from_dict(self.q, state, self.actions)
             )
 
-    def train(self, world: GridWorld, episodes: int = 100) -> tuple[list[int], list[float]]:
+    def train(
+        self, world: GridWorld, episodes: int = 100
+    ) -> tuple[list[int], list[float]]:
         i = 0
         episode_lengths = []
         episode_total_returns = []
         while i < episodes:
-            episode_states, episode_rewards = self.run_episode(world)
+            episode_states, episode_rewards, _ = self.run_episode(world)
             if self.episode_terminated:
                 episode_returns = returns_from_reward(episode_rewards, self.gamma)
                 episode_lengths.append(len(episode_states))
@@ -72,11 +70,11 @@ class MonteCarloAgent(Agent):
 
     def run_episode(
         self, world: GridWorld, initial_state: State = None
-    ) -> tuple[list[float], list[float]]:
+    ) -> tuple[list[State], list[float], list[Action]]:
         state = initial_state if initial_state is not None else world.initial_state
 
         self.episode_terminated = False
-        episode_states = [state]
+        episode_states = []
         episode_actions = []
         episode_rewards = []
 
@@ -96,7 +94,7 @@ class MonteCarloAgent(Agent):
 
         # if episode didn't terminate we can't learn anything
         if not self.episode_terminated:
-            return [], []
+            return [], [], []
 
         self._update_visited_states(episode_states)
 
@@ -111,7 +109,7 @@ class MonteCarloAgent(Agent):
                 cur_state, get_best_action_from_dict(self.q, state, self.actions)
             )
 
-        return episode_states, episode_rewards
+        return episode_states, episode_rewards, episode_actions
 
     def _update_visited_states(self, episode_states: Collection[State]):
         self.visited_states = self.visited_states.union(set(episode_states))
@@ -126,4 +124,6 @@ class MonteCarloAgent(Agent):
 
         for s, a in fvr:
             self.u[s, a] = self.u.get((s, a), 0) + 1
-            self.q[s, a] = self.q.get((s, a), 0) + (fvr[s, a] - self.q.get((s, a), 0)) / self.u.get((s, a), 0)
+            self.q[s, a] = self.q.get((s, a), 0) + (
+                fvr[s, a] - self.q.get((s, a), 0)
+            ) / self.u.get((s, a), 0)

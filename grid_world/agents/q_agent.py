@@ -63,7 +63,7 @@ class QAgent(Agent):
         episode_lengths = []
         episode_total_returns = []
         for episode in range(episodes):
-            episode_states, episode_rewards = self.run_episode(world)
+            episode_states, episode_rewards, _ = self.run_episode(world)
             episode_returns = returns_from_reward(episode_rewards, self.gamma)
             episode_lengths.append(len(episode_states))
             episode_total_returns.append(episode_returns[0])
@@ -74,11 +74,12 @@ class QAgent(Agent):
 
     def run_episode(
         self, world: GridWorld, initial_state: State = None
-    ) -> tuple[list[float], list[float]]:
+    ) -> tuple[list[State], list[float], list[Action]]:
         state = initial_state if initial_state is not None else world.initial_state
 
-        episode_states = [state]
+        episode_states = []
         episode_rewards = []
+        episode_actions = []
 
         # run through the world while updating q and the policy as we go
         effect = 0
@@ -100,8 +101,10 @@ class QAgent(Agent):
                 state, get_best_action_from_dict(self.q, state, self.actions)
             )
 
-            state = new_state
             episode_states.append(state)
             episode_rewards.append(reward)
+            episode_actions.append(action)
 
-        return episode_states, episode_rewards
+            state = new_state
+
+        return episode_states, episode_rewards, episode_actions
