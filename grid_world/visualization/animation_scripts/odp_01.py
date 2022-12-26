@@ -19,7 +19,7 @@ if __name__ == "__main__":
         reward_function=basic_reward,
         actions=basic_actions,
         world_shape=world.grid_shape,
-        terminal_coordinates=world.terminal_states_coordinates[0]
+        terminal_coordinates=world.terminal_states_coordinates[0],
     )
 
     states_history = []

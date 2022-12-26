@@ -47,15 +47,22 @@ class ODPAgent:
         self.reward_function: Final = reward_function
         self.actions: Final = actions if actions is not None else tuple(Action)
         self.gamma = gamma
-        self.world_map: WorldMap = WorldMap(
-            world_states=set(), actions=self.actions
-        ) if terminal_coordinates is None else WorldMap(
-            world_states={State(terminal_coordinates, "terminal")}, actions=self.actions
+        self.world_map: WorldMap = (
+            WorldMap(world_states=set(), actions=self.actions)
+            if terminal_coordinates is None
+            else WorldMap(
+                world_states={State(terminal_coordinates, "terminal")},
+                actions=self.actions,
+            )
         )
         self.final_state_known = terminal_coordinates is not None
         self.optimal_path_found = False
         self.world_shape = world_shape
-        self.policy = self._build_odp_policy(False) if self.final_state_known else get_random_policy(self.actions)
+        self.policy = (
+            self._build_odp_policy(False)
+            if self.final_state_known
+            else get_random_policy(self.actions)
+        )
 
     def train(
         self, world: GridWorld, episodes: int = 100, verbose: bool = False

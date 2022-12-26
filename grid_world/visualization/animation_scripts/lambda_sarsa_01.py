@@ -22,7 +22,7 @@ if __name__ == "__main__":
         alpha=0.7,
         epsilon=0.01,
         et_lambda=0.7,
-        et_kind="accumulating"
+        et_kind="accumulating",
     )
 
     states_history = []

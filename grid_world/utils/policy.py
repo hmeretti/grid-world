@@ -57,7 +57,9 @@ def sample_action(policy: Policy, state: State, actions: Collection[Action]) -> 
         if n0 <= cum_sum:
             return action
 
-    raise ValueError(f"policy adds to: {cum_sum:.5f} over actions: {[x.name for x in actions]} in state: {state.coordinates}")
+    raise ValueError(
+        f"policy adds to: {cum_sum:.5f} over actions: {[x.name for x in actions]} in state: {state.coordinates}"
+    )
 
 
 def get_e_greedy_policy(

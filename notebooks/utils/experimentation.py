@@ -58,8 +58,8 @@ def get_exp_results(
 def get_summary_df(results, final_episodes=10):
     params_keys = list(results[0][0].keys())
     data = [
-        [params[key] for key in params_keys]+
-        [
+        [params[key] for key in params_keys]
+        + [
             np.mean(np.sum(np.array(values[0]), axis=1)),
             np.std(np.sum(np.array(values[0]), axis=1)),
             np.average(np.array(values[0])[:, -final_episodes:]),
@@ -71,7 +71,8 @@ def get_summary_df(results, final_episodes=10):
 
     return pd.DataFrame(
         data,
-        columns=params_keys + [
+        columns=params_keys
+        + [
             "average_round_reward",
             "std_round_reward",
             "average_reward_final_10",

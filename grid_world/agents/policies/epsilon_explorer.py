@@ -33,22 +33,19 @@ class EpsilonExplorer(Policy):
         elif len(valid_actions) == 1:
             return 1
         else:
-            return self.policy_map.get(
-                (state, action),
-                1 / len(valid_actions)
-            )
+            return self.policy_map.get((state, action), 1 / len(valid_actions))
 
     def update(
         self,
         state: State,
         best_action: Action,
         valid_actions: list[Action],
-        force_update: bool = False
+        force_update: bool = False,
     ) -> None:
         if (
-            self.best_action.get(state) != best_action or
-            self.reasonable_actions.get(state) != valid_actions or
-            force_update
+            self.best_action.get(state) != best_action
+            or self.reasonable_actions.get(state) != valid_actions
+            or force_update
         ):
             # only need to update if best action, or valid actions changed for the state
             self.reasonable_actions[state] = valid_actions

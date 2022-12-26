@@ -87,7 +87,9 @@ class QExplorerAgent:
         effect = 0
         while effect != 1:
             action = sample_action(
-                self.policy, state, self.world_map.reasonable_actions.get(state, self.actions)
+                self.policy,
+                state,
+                self.world_map.reasonable_actions.get(state, self.actions),
             )
             new_state, effect = world.take_action(state, action)
             reward = self.reward_function(effect)
@@ -96,16 +98,13 @@ class QExplorerAgent:
             meaningful_update = self.world_map.update_map(state, action, new_state)
 
             # learn from what happened
-            next_valid_actions = self.world_map.reasonable_actions.get(new_state, self.actions)
+            next_valid_actions = self.world_map.reasonable_actions.get(
+                new_state, self.actions
+            )
             cur_q = self.q.get((state, action), 0)
             self.q[state, action] = cur_q + self.alpha * (
                 reward
-                + self.gamma
-                * best_q_value(
-                    self.q,
-                    new_state,
-                    next_valid_actions
-                )
+                + self.gamma * best_q_value(self.q, new_state, next_valid_actions)
                 - cur_q
             )
 
@@ -113,7 +112,9 @@ class QExplorerAgent:
             if meaningful_update:
                 # if we added a trap or wall a lot of states may change
                 for cur_state in self.world_map.world_states:
-                    cur_valid_actions = self.world_map.reasonable_actions.get(cur_state, self.actions)
+                    cur_valid_actions = self.world_map.reasonable_actions.get(
+                        cur_state, self.actions
+                    )
                     self.policy.update(
                         cur_state,
                         get_best_action_from_dict(self.q, cur_state, cur_valid_actions),
@@ -122,7 +123,9 @@ class QExplorerAgent:
             else:
                 # otherwise we only need to worry about the current and next states
                 for cur_state in [state, new_state]:
-                    cur_valid_actions = self.world_map.reasonable_actions.get(cur_state, self.actions)
+                    cur_valid_actions = self.world_map.reasonable_actions.get(
+                        cur_state, self.actions
+                    )
                     self.policy.update(
                         cur_state,
                         get_best_action_from_dict(self.q, cur_state, cur_valid_actions),
