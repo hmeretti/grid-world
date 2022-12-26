@@ -17,7 +17,7 @@ def get_policy_rec_str(d: PolicyRec, world: GridWorld) -> str:
                     cur_char = cur_state.get_unicode()
                 else:
                     cur_char = d[cur_state].unicode
-            dict_str += f" {cur_char} "
+            dict_str += f"{cur_char}"
         dict_str += "\n\n"
 
     return dict_str
@@ -69,7 +69,7 @@ def get_world_str(
                 cur_state = world.get_state((i, j))
                 cur_char = cur_state.get_unicode()
 
-            world_str += f" {cur_char} "
+            world_str += f"{cur_char}"
         world_str += f"\n\n"
     if show_coordinates:
         world_str += " " + "".join([f" {i} " for i in range(world.grid_shape[0])])

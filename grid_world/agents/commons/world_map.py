@@ -21,21 +21,26 @@ class WorldMap:
             State, list[Action]
         ] = self._get_reasonable_actions()
 
-    def update_map(self, state: State, action: Action, new_state: State) -> None:
+    def update_map(self, state: State, action: Action, new_state: State) -> bool:
         """
         Updates map based given a State, Action, State sequence.
         :param state: the original state
         :param action: the action taken
         :param new_state: the final state
+
+        :return: flag indicating whether we added a trap or wall to the map
         """
-        if new_state == state:
+        meaningful_update = False
+        if (new_state == state) and (state.kind != "terminal"):
             self.world_states.add(
                 State(add_tuples(state.coordinates, action.direction), "wall")
             )
+            meaningful_update = True
         else:
             self.world_states.add(new_state)
         self.no_go_coordinates = self._get_no_go_coordinates()
         self.reasonable_actions = self._get_reasonable_actions()
+        return True if new_state.kind == "trap" else meaningful_update
 
     def _get_no_go_coordinates(self) -> list[tuple[int, ...]]:
         return [s.coordinates for s in self.world_states if s.kind in {"trap", "wall"}]

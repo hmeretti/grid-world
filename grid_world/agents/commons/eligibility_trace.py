@@ -37,5 +37,5 @@ class EligibilityTrace:
         else:
             raise ValueError("kind must be one of: accumulating, dutch, replacing")
 
-    def get_relevant_states(self):
+    def get_relevant_state_actions(self):
         return list(self.et_dict.keys())
