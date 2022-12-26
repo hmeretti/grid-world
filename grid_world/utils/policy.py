@@ -51,10 +51,15 @@ def sample_action(policy: Policy, state: State, actions: Collection[Action]) -> 
     n0 = np.random.uniform()
     for action in actions:
         cum_sum += policy(state, action)
+    cum_sum = 0
+    for action in actions:
+        cum_sum += policy(state, action)
         if n0 <= cum_sum:
             return action
 
-    raise ValueError("policy does not add to 1 over actions")
+    raise ValueError(
+        f"policy adds to: {cum_sum:.5f} over actions: {[x.name for x in actions]} in state: {state.coordinates}"
+    )
 
 
 def get_e_greedy_policy(
@@ -83,11 +88,13 @@ def get_e_greedy_policy(
 
 
 def get_best_action_from_dict(q: Q, s: State, actions: Collection[Action]) -> Action:
-    best_score = float("-inf")
-    for a in actions:
-        if (score := q.get((s, a), 0)) > best_score:
-            best_score = score
-            best_action = a
+    best_action = actions[0]
+    best_score = q.get((s, best_action), 0)
+    if len(actions) > 1:
+        for a in actions[1:]:
+            if (score := q.get((s, a), 0)) > best_score:
+                best_score = score
+                best_action = a
     return best_action
 
 

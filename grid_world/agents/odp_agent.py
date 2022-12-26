@@ -11,14 +11,15 @@ from grid_world.utils.policy import (
     sample_action,
 )
 from grid_world.utils.returns import returns_from_reward
+from grid_world.visualization.format_objects import get_world_str
 
 
 class ODPAgent:
     def __init__(
         self,
         reward_function: RewardFunction,
-        world_height: int,
-        world_length: int,
+        world_shape: tuple[int, int],
+        terminal_coordinates: tuple[int, int] = None,
         actions: Collection[Action] = None,
         gamma: float = 1,
     ):
@@ -46,28 +47,40 @@ class ODPAgent:
         self.reward_function: Final = reward_function
         self.actions: Final = actions if actions is not None else tuple(Action)
         self.gamma = gamma
-        self.world_map: WorldMap = WorldMap(world_states=set(), actions=self.actions)
-        self.final_state_known = False
+        self.world_map: WorldMap = (
+            WorldMap(world_states=set(), actions=self.actions)
+            if terminal_coordinates is None
+            else WorldMap(
+                world_states={State(terminal_coordinates, "terminal")},
+                actions=self.actions,
+            )
+        )
+        self.final_state_known = terminal_coordinates is not None
         self.optimal_path_found = False
-        self.policy = get_random_policy(self.actions)
-        self.world_length = world_length
-        self.world_height = world_height
+        self.world_shape = world_shape
+        self.policy = (
+            self._build_odp_policy(False)
+            if self.final_state_known
+            else get_random_policy(self.actions)
+        )
 
     def train(
         self, world: GridWorld, episodes: int = 100, verbose: bool = False
     ) -> tuple[list[int], list[float]]:
         episode_lengths = []
         episode_total_returns = []
-        for _ in range(episodes):
+        for episode in range(episodes):
             episode_states, episode_rewards, _ = self.run_episode(world, verbose)
             episode_returns = returns_from_reward(episode_rewards, self.gamma)
             episode_lengths.append(len(episode_states))
             episode_total_returns.append(episode_returns[0])
+            if verbose:
+                print(f"episode {episode} terminated")
 
         return episode_lengths, episode_total_returns
 
     def run_episode(
-        self, world: GridWorld, verbose: bool
+        self, world: GridWorld, verbose: bool = False
     ) -> tuple[list[State], list[float], list[Action]]:
         state = world.initial_state
         perfect_run = True
@@ -84,12 +97,10 @@ class ODPAgent:
             reward = self.reward_function(effect)
 
             # update our map based on what happened
-            self.world_map.update_map(state, action, new_state)
+            meaningful_update = self.world_map.update_map(state, action, new_state)
 
             # in case we already know the final state, and we hit a wall or trap we need to update the policy
-            if self.final_state_known and (
-                new_state == state or new_state.kind == "trap"
-            ):
+            if self.final_state_known and meaningful_update:
                 self.policy = self._build_odp_policy(verbose)
                 perfect_run = False
 
@@ -101,7 +112,7 @@ class ODPAgent:
         # in case this wasn't a randon run, and we did not have to make path corrections we have found an optimal path
         self.optimal_path_found = self.final_state_known and perfect_run
 
-        # this triggers after the first successful run
+        # this triggers after the first successful run, if we didn't know the final state
         if not self.final_state_known:
             self.policy = self._build_odp_policy(verbose)
             self.final_state_known = True
@@ -110,7 +121,7 @@ class ODPAgent:
 
     def build_opt_world(self) -> GridWorld:
         return GridWorld(
-            grid_shape=(self.world_height, self.world_length),
+            grid_shape=self.world_shape,
             terminal_states_coordinates=self._get_state_by_kind(
                 "terminal",
             ),
@@ -128,8 +139,8 @@ class ODPAgent:
             for a in self.world_map.world_states
             if (
                 a.kind == kind
-                and (0 <= a.coordinates[0] < self.world_height)
-                and (0 <= a.coordinates[1] < self.world_length)
+                and (0 <= a.coordinates[0] < self.world_shape[0])
+                and (0 <= a.coordinates[1] < self.world_shape[1])
             )
         )
 

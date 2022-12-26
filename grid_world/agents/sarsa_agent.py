@@ -74,13 +74,13 @@ class SarsaAgent(Agent):
         self, world: GridWorld, initial_state: State = None
     ) -> tuple[list[State], list[float], list[Action]]:
         state = initial_state if initial_state is not None else world.initial_state
+        action = sample_action(self.policy, state, self.actions)
 
         episode_states = []
         episode_rewards = []
         episode_actions = []
 
         # run through the world while updating q and the policy  as we go
-        action = sample_action(self.policy, state, self.actions)
         effect = 0
         while effect != 1:
             new_state, effect = world.take_action(state, action)

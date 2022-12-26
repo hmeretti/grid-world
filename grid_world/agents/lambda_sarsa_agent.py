@@ -1,6 +1,7 @@
 from typing import Final, Collection
 
 from grid_world.action import Action
+from grid_world.agents.policies.epsilon_greedy import EpsilonGreedy
 from grid_world.grid_world import GridWorld
 from grid_world.state import State
 from grid_world.type_aliases import RewardFunction, Q, DecayFunction
@@ -22,8 +23,8 @@ class LambdaSarsaAgent:
         epsilon: float = 0.1,
         et_lambda: float = 0.5,
         et_kind: str = "accumulating",
-        epsilon_decay: DecayFunction = lambda x: lambda y: x,
-        alpha_decay: DecayFunction = lambda x: lambda y: x,
+        epsilon_decay: DecayFunction = None,
+        alpha_decay: DecayFunction = None,
         q_0: Q = None,
     ):
         """
@@ -43,31 +44,19 @@ class LambdaSarsaAgent:
 
         """
         self.reward_function: Final = reward_function
+        self.policy: EpsilonGreedy = EpsilonGreedy(epsilon, actions, epsilon_decay)
         self.actions: Final = actions if actions is not None else tuple(Action)
         self.gamma = gamma
         self.alpha = alpha
-        self.epsilon = epsilon
         self.et_lambda = et_lambda
         self.et_kind = et_kind
         self.q: Q = q_0 if q_0 is not None else {}
-        self.epsilon_decay = epsilon_decay
-        self.alpha_decay = alpha_decay
+        self.alpha_decay = alpha_decay if alpha_decay is not None else (lambda x: x)
         self.visited_states: set[State] = set(x for (x, a) in self.q.keys())
-        self.policy_map: dict[[State, Action], float] = {}
 
-        for x in self.visited_states:
-            self._update_policy_map(x)
-
-    def policy(self, state: State, action: Action) -> float:
-        return self.policy_map.get((state, action), 1 / len(self.actions))
-
-    def _update_policy_map(self, state: State) -> None:
-        best_action = get_best_action_from_dict(self.q, state, self.actions)
-        for cur_a in self.actions:
-            self.policy_map[state, cur_a] = (
-                1 - self.epsilon
-                if cur_a == best_action
-                else self.epsilon / (len(self.actions) - 1)
+        for state in self.visited_states:
+            self.policy.update(
+                state, get_best_action_from_dict(self.q, state, self.actions)
             )
 
     def train(
@@ -82,8 +71,8 @@ class LambdaSarsaAgent:
             episode_returns = returns_from_reward(episode_rewards, self.gamma)
             episode_lengths.append(len(episode_states))
             episode_total_returns.append(episode_returns[0])
-            self.epsilon = self.epsilon_decay(episode)
-            self.alpha = self.alpha_decay(episode)
+            self.policy.decay()
+            self.alpha = self.alpha_decay(self.alpha)
 
         return episode_lengths, episode_total_returns
 
@@ -112,17 +101,24 @@ class LambdaSarsaAgent:
             # learn from what happened
             delta = (
                 reward
-                + self.gamma * self.q[new_state, next_action]
-                - self.q[state, action]
+                + self.gamma * self.q.get((new_state, next_action), 0)
+                - self.q.get((state, action), 0)
             )
             update_dict = {
-                sap: self.q[sap] + self.alpha * delta * eligibility_trace(*sap)
-                for sap in eligibility_trace.get_relevant_states()
+                sap: self.q.get(sap, 0) + self.alpha * delta * eligibility_trace(*sap)
+                for sap in eligibility_trace.get_relevant_state_actions()
             }
             self.q.update(update_dict)
 
             # improve from what was learned
-            self._update_policy_map(state)
+            self.policy.update(
+                state, get_best_action_from_dict(self.q, state, self.actions)
+            )
+
+            # for iter_state in {x for x, _ in update_dict}:
+            #     self.policy.update(
+            #         iter_state, get_best_action_from_dict(self.q, iter_state, self.actions)
+            #     )
 
             episode_states.append(state)
             episode_rewards.append(reward)

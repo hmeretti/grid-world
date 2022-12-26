@@ -1,7 +1,3 @@
-# WIP
-
-Still a very preliminary version; working on lots of functionalities and things change a lot. Some agents are probably currently not working.
-
 ## Intro
 
 This project contains a simple grid world simulation and methods for solving the problem, such as dynamic programming and
@@ -26,18 +22,20 @@ This will create a local environment, set as the default for this dir, and insta
 
 The project structure is very simple
 
-```bash
+```
 ├── dynamic_programing
 ├── grid_world
 │   ├── agents
+│   │   ├── commons
+│   │   └── policies
 │   ├── utils
 │   └── visualization
 │       └── animation_scripts
 ├── notebooks
 │   ├── dynamic_programing
 │   ├── experiments
-│   └── reinforcement_learning
-│       └── agents
+│   ├── exploring_agents
+│   └── utils
 └── utils
 ```
 
@@ -47,11 +45,11 @@ implementation is at `dynamic_programing`. This is in a stand-alone directory be
 RL agents, this implementation should be general enough for any problem, as long as it is implemented
 in way conforming to the specified type aliases.
 
+Under `notebooks\dynamic_progaming` you can find ways to solve our problem using DP. While at 
+`notebooks\exploring_agents` you will find explanations on how the implemented agents
+work. Under `notebooks\experiments` we are supposed to have some experiments exploring the differences
+between these methods(not much here yet).
+
 You can find some scripts to generate visualizations of the agent running throw the world in 
 `grid_world/visualization/animation_scripts`. They are pretty simple, and can be edited quite easily. 
-Don't know if they work on Windows or Mac.
-
-Under `notebooks\dynamic_progaming` you can find ways to solve our problem using DP. While at 
-`notebooks\reinforcement_learning\agents` you will find explanations on how the implemented agents
-work. Under `notebooks\experiments` we are supposed to have some experiments exploring the differences
-between these methods.
+They work fine on linux, but I don't know if they will work on Windows or Mac.
