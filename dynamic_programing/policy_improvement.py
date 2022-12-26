@@ -93,7 +93,7 @@ def dynamic_programing_gpi(
     :param reward_function: the reward for taking an action in a given state
     :param actions: all possible actions
     :param states: all possible states
-    :param pi: an initial policy, will user random uniform if none is passed
+    :param pi: an initial policy, will use random uniform if none is passed
     :param max_epochs: max number of policy iterations to run(will stop early if the value
         function converges)
     :param verbose: whether we should print additional information or not
