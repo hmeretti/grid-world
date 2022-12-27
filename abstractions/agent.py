@@ -31,5 +31,10 @@ class Agent(ABC):
         raise NotImplementedError("run_update method not implemented")
 
     @abstractmethod
-    def finalize_episode(self):
+    def finalize_episode(
+        self,
+        episode_states: list[State],
+        episode_returns: list[float],
+        episode_actions: list[Action],
+    ):
         raise NotImplementedError("finalize_episode method not implemented")

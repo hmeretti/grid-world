@@ -2,7 +2,6 @@ from typing import Final
 
 from abstractions import Agent, RewardFunction, Action, DecayFunction, State, Effect, Q
 from grid_world.agents.policies.epsilon_greedy import EpsilonGreedy
-from utils.evaluators import best_q_value
 from utils.policy import get_best_action_from_dict, sample_action
 
 
@@ -77,7 +76,12 @@ class SarsaAgent(Agent):
 
         return reward
 
-    def finalize_episode(self):
+    def finalize_episode(
+            self,
+            episode_states: list[State],
+            episode_returns: list[float],
+            episode_actions: list[Action],
+    ):
         self.next_action = None
         self.policy.decay()
         self.alpha = self.alpha_decay(self.alpha)

@@ -3,7 +3,6 @@ from typing import Final
 from abstractions import Agent, RewardFunction, Action, DecayFunction, State, Effect, Q
 from exploring_agents.commons.eligibility_trace import EligibilityTrace
 from grid_world.agents.policies.epsilon_greedy import EpsilonGreedy
-from utils.evaluators import best_q_value
 from utils.policy import get_best_action_from_dict, sample_action
 
 
@@ -74,9 +73,9 @@ class LambdaSarsaAgent(Agent):
 
         # learn from what happened
         delta = (
-                reward
-                + self.gamma * self.q.get((next_state, self.next_action), 0)
-                - self.q.get((state, action), 0)
+            reward
+            + self.gamma * self.q.get((next_state, self.next_action), 0)
+            - self.q.get((state, action), 0)
         )
         update_dict = {
             sap: self.q.get(sap, 0) + self.alpha * delta * self.eligibility_trace(*sap)
@@ -91,7 +90,13 @@ class LambdaSarsaAgent(Agent):
 
         return reward
 
-    def finalize_episode(self):
+    def finalize_episode(
+        self,
+        episode_states: list[State],
+        episode_returns: list[float],
+        episode_actions: list[Action],
+    ):
+
         self.next_action = None
         self.eligibility_trace.reset()
         self.policy.decay()
