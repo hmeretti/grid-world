@@ -2,7 +2,7 @@ from typing import Iterable, Collection
 
 import numpy as np
 
-from abstractions import Action, State, World, PolicyRec, Q, Policy
+from abstractions import Action, State, World, PolicyRec, Q, Policy, ActionTypeVar
 
 
 def get_policy_rec(pi: Policy, world: World, actions: Iterable[Action]) -> PolicyRec:
@@ -28,7 +28,7 @@ def get_policy_rec(pi: Policy, world: World, actions: Iterable[Action]) -> Polic
     return pi_rec
 
 
-def get_random_policy(actions: Collection[Action]) -> Policy:
+def get_random_policy(actions: Collection[Action]):
     """
     Builds a random uniform policy over a set of actions
 
@@ -39,7 +39,7 @@ def get_random_policy(actions: Collection[Action]) -> Policy:
     return lambda s, a: 1 / len(actions)
 
 
-def sample_action(policy: Policy, state: State, actions: Collection[Action]) -> Action:
+def sample_action(policy: Policy, state: State, actions: Collection[ActionTypeVar]) -> ActionTypeVar:
     cum_sum = 0
     n0 = np.random.uniform()
     for action in actions:
@@ -80,7 +80,7 @@ def get_e_greedy_policy(
     return lambda cs, ca: policy_map.get((cs, ca), 1 / act_len)
 
 
-def get_best_action_from_dict(q: Q, s: State, actions: list[Action]) -> Action:
+def get_best_action_from_dict(q: Q, s: State, actions: list[ActionTypeVar]) -> ActionTypeVar:
     best_action = actions[0]
     best_score = q.get((s, best_action), 0)
     if len(actions) > 1:

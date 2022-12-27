@@ -1,5 +1,3 @@
-from typing import Collection
-
 from grid_world.action import GWorldAction
 from grid_world.state import GWorldState
 from abstractions import DecayFunction, Policy
@@ -8,8 +6,8 @@ from abstractions import DecayFunction, Policy
 class EpsilonExplorer(Policy):
     def __init__(
         self,
-        epsilon: float = 0.1,
-        actions: Collection[GWorldAction] = tuple(GWorldAction),
+        epsilon: float,
+        actions: list[GWorldAction],
         epsilon_decay: DecayFunction = None,
     ):
         """
