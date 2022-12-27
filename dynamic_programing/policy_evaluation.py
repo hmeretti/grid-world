@@ -1,15 +1,8 @@
-from collections import Callable, Collection
+from collections import Collection
 
 import numpy as np
 
-from dynamic_programing.type_aliases import (
-    State,
-    EvalFunction,
-    Policy,
-    RewardFunction,
-    WorldModel,
-    Action,
-)
+from abstractions import State, EvalFunction, RewardFunction, WorldModel, Policy, Action
 
 
 def _acc_v(

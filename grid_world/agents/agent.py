@@ -1,7 +1,4 @@
-from typing import Any
-
-from dynamic_programing.type_aliases import State, Action
-from grid_world.grid_world import GridWorld
+from abstractions import State, Action, World
 
 
 class Agent:
@@ -15,12 +12,12 @@ class Agent:
 
     def train(
         self,
-        world: GridWorld,
+        world: World,
         episodes: int,
     ) -> tuple[list[int], list[float]]:
         raise NotImplementedError("train method not implemented")
 
     def run_episode(
-        self, world: GridWorld, initial_state: State
+        self, world: World, initial_state: State
     ) -> tuple[list[State], list[float], list[Action]]:
         raise NotImplementedError("run_episode method not implemented")

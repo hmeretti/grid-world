@@ -1,16 +1,13 @@
 from typing import Collection
 
-from grid_world.action import Action
-from grid_world.agents.policies.policy import Policy
-from grid_world.state import State
-from grid_world.type_aliases import DecayFunction
+from abstractions import Action, State, DecayFunction, Policy
 
 
 class EpsilonGreedy(Policy):
     def __init__(
         self,
         epsilon: float = 0.1,
-        actions: Collection[Action] = tuple(Action),
+        actions: Collection[Action] = None,
         epsilon_decay: DecayFunction = None,
     ):
         """

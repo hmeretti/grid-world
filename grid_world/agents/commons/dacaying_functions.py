@@ -1,4 +1,4 @@
-from grid_world.type_aliases import DecayFunction
+from abstractions import DecayFunction
 
 
 def get_linear_decay(decay: float = 1, min_value: float = 0) -> DecayFunction:

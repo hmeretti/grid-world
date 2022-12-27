@@ -2,10 +2,11 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from grid_world.visualization.unicode_definitions import states_symbols
+from abstractions import State
 
 
 @dataclass(frozen=True)
-class State:
+class GWorldState(State):
     coordinates: tuple[int, int]
     kind: str = "empty"
 

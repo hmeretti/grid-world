@@ -1,24 +1,24 @@
 from typing import Final, Collection
 
-from grid_world.action import Action
+from grid_world.action import GWorldAction
 from grid_world.agents.policies.epsilon_explorer import EpsilonExplorer
-from grid_world.state import State
+from grid_world.state import GWorldState
 from grid_world.agents.commons.world_map import WorldMap
 from grid_world.grid_world import GridWorld
-from grid_world.type_aliases import Policy, RewardFunction, Q, DecayFunction
-from grid_world.utils.evaluators import best_q_value
-from grid_world.utils.policy import (
+from abstractions import RewardFunction, Q, DecayFunction
+from utils.evaluators import best_q_value
+from utils.policy import (
     sample_action,
     get_best_action_from_dict,
 )
-from grid_world.utils.returns import returns_from_reward
+from utils.returns import returns_from_reward
 
 
 class QExplorerAgent:
     def __init__(
         self,
         reward_function: RewardFunction,
-        actions: Collection[Action] = None,
+        actions: Collection[GWorldAction] = None,
         gamma: float = 1,
         alpha: float = 0.1,
         epsilon: float = 0.1,
@@ -44,7 +44,7 @@ class QExplorerAgent:
 
         """
         self.reward_function: Final = reward_function
-        self.actions: Final = actions if actions is not None else tuple(Action)
+        self.actions: Final = actions if actions is not None else tuple(GWorldAction)
         self.policy: EpsilonExplorer = EpsilonExplorer(epsilon, actions, epsilon_decay)
         self.gamma = gamma
         self.alpha = alpha
@@ -54,7 +54,7 @@ class QExplorerAgent:
         self.world_map: WorldMap = WorldMap(
             world_states=set(x for (x, a) in self.q.keys()), actions=self.actions
         )
-        self.policy_map: dict[[State, Action], float] = {}
+        self.policy_map: dict[[GWorldState, GWorldAction], float] = {}
 
     def train(
         self,
@@ -74,8 +74,8 @@ class QExplorerAgent:
         return episode_lengths, episode_total_returns
 
     def run_episode(
-        self, world: GridWorld, initial_state: State = None
-    ) -> tuple[list[State], list[float], list[Action]]:
+        self, world: GridWorld, initial_state: GWorldState = None
+    ) -> tuple[list[GWorldState], list[float], list[GWorldAction]]:
         state = initial_state if initial_state is not None else world.initial_state
         self.world_map.world_states.add(state)
 

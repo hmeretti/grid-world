@@ -1,17 +1,16 @@
 from typing import Final, Collection
 
 from dynamic_programing.policy_improvement import dynamic_programing_gpi
-from grid_world.action import Action
+from grid_world.action import GWorldAction
 from grid_world.agents.commons.world_map import WorldMap
 from grid_world.grid_world import GridWorld
-from grid_world.state import State
-from grid_world.type_aliases import Policy, RewardFunction
-from grid_world.utils.policy import (
+from grid_world.state import GWorldState
+from abstractions import Policy, RewardFunction
+from utils.policy import (
     get_random_policy,
     sample_action,
 )
-from grid_world.utils.returns import returns_from_reward
-from grid_world.visualization.format_objects import get_world_str
+from utils.returns import returns_from_reward
 
 
 class ODPAgent:
@@ -20,7 +19,7 @@ class ODPAgent:
         reward_function: RewardFunction,
         world_shape: tuple[int, int],
         terminal_coordinates: tuple[int, int] = None,
-        actions: Collection[Action] = None,
+        actions: Collection[GWorldAction] = None,
         gamma: float = 1,
     ):
         """
@@ -45,13 +44,13 @@ class ODPAgent:
         :gamma: the gamma discount value to be used when calculating episode returns
         """
         self.reward_function: Final = reward_function
-        self.actions: Final = actions if actions is not None else tuple(Action)
+        self.actions: Final = actions if actions is not None else tuple(GWorldAction)
         self.gamma = gamma
         self.world_map: WorldMap = (
             WorldMap(world_states=set(), actions=self.actions)
             if terminal_coordinates is None
             else WorldMap(
-                world_states={State(terminal_coordinates, "terminal")},
+                world_states={GWorldState(terminal_coordinates, "terminal")},
                 actions=self.actions,
             )
         )
@@ -81,7 +80,7 @@ class ODPAgent:
 
     def run_episode(
         self, world: GridWorld, verbose: bool = False
-    ) -> tuple[list[State], list[float], list[Action]]:
+    ) -> tuple[list[GWorldState], list[float], list[GWorldAction]]:
         state = world.initial_state
         perfect_run = True
 

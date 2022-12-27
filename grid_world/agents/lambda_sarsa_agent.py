@@ -1,15 +1,15 @@
 from typing import Final, Collection
 
-from grid_world.action import Action
+from grid_world.action import GWorldAction
 from grid_world.agents.policies.epsilon_greedy import EpsilonGreedy
 from grid_world.grid_world import GridWorld
-from grid_world.state import State
-from grid_world.type_aliases import RewardFunction, Q, DecayFunction
-from grid_world.utils.policy import (
+from grid_world.state import GWorldState
+from abstractions import RewardFunction, Q, DecayFunction
+from utils.policy import (
     sample_action,
     get_best_action_from_dict,
 )
-from grid_world.utils.returns import returns_from_reward
+from utils.returns import returns_from_reward
 from grid_world.agents.commons.eligibility_trace import EligibilityTrace
 
 
@@ -17,7 +17,7 @@ class LambdaSarsaAgent:
     def __init__(
         self,
         reward_function: RewardFunction,
-        actions: Collection[Action] = None,
+        actions: Collection[GWorldAction] = None,
         gamma: float = 1,
         alpha: float = 0.1,
         epsilon: float = 0.1,
@@ -45,14 +45,14 @@ class LambdaSarsaAgent:
         """
         self.reward_function: Final = reward_function
         self.policy: EpsilonGreedy = EpsilonGreedy(epsilon, actions, epsilon_decay)
-        self.actions: Final = actions if actions is not None else tuple(Action)
+        self.actions: Final = actions if actions is not None else tuple(GWorldAction)
         self.gamma = gamma
         self.alpha = alpha
         self.et_lambda = et_lambda
         self.et_kind = et_kind
         self.q: Q = q_0 if q_0 is not None else {}
         self.alpha_decay = alpha_decay if alpha_decay is not None else (lambda x: x)
-        self.visited_states: set[State] = set(x for (x, a) in self.q.keys())
+        self.visited_states: set[GWorldState] = set(x for (x, a) in self.q.keys())
 
         for state in self.visited_states:
             self.policy.update(
@@ -77,8 +77,8 @@ class LambdaSarsaAgent:
         return episode_lengths, episode_total_returns
 
     def run_episode(
-        self, world: GridWorld, initial_state: State = None
-    ) -> tuple[list[State], list[float], list[Action]]:
+        self, world: GridWorld, initial_state: GWorldState = None
+    ) -> tuple[list[GWorldState], list[float], list[GWorldAction]]:
         eligibility_trace = EligibilityTrace(
             et_lambda=self.et_lambda, gamma=self.gamma, kind=self.et_kind
         )

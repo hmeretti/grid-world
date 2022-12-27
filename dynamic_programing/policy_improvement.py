@@ -1,14 +1,8 @@
 from typing import Collection
 
 from dynamic_programing.policy_evaluation import iterative_policy_evaluation
-from dynamic_programing.type_aliases import (
-    State,
-    EvalFunction,
-    Action,
-    WorldModel,
-    RewardFunction,
-    Policy,
-)
+from abstractions import EvalFunction, WorldModel, RewardFunction, State, Action, Policy
+
 from utils.operations import float_dict_comparison
 
 

@@ -2,17 +2,17 @@ import time
 import cursor
 import curses
 
-from grid_world.action import Action
+from grid_world.action import GWorldAction
 from grid_world.grid_world import GridWorld
-from grid_world.state import State
+from grid_world.state import GWorldState
 from grid_world.visualization.format_objects import get_world_str_lines
 from grid_world.visualization.unicode_definitions import states_symbols
 
 
 def animate_episodes(
     world: GridWorld,
-    states_history: list[list[State]],
-    actions_history: list[list[Action]],
+    states_history: list[list[GWorldState]],
+    actions_history: list[list[GWorldAction]],
     sleep_time: float = 1,
     episodes_to_animate: list[int] = None,
 ):

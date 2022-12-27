@@ -1,23 +1,23 @@
 from typing import Final, Collection
 
-from grid_world.action import Action
+from grid_world.action import GWorldAction
 from grid_world.agents.agent import Agent
 from grid_world.agents.policies.epsilon_greedy import EpsilonGreedy
 from grid_world.grid_world import GridWorld
-from grid_world.state import State
-from grid_world.type_aliases import RewardFunction, Q, DecayFunction
-from grid_world.utils.policy import (
+from grid_world.state import GWorldState
+from abstractions import RewardFunction, Q, DecayFunction
+from utils.policy import (
     sample_action,
     get_best_action_from_dict,
 )
-from grid_world.utils.returns import returns_from_reward, first_visit_return
+from utils.returns import returns_from_reward, first_visit_return
 
 
 class MonteCarloAgent(Agent):
     def __init__(
         self,
         reward_function: RewardFunction,
-        actions: Collection[Action] = None,
+        actions: Collection[GWorldAction] = None,
         gamma: float = 1,
         epsilon: float = 0.1,
         max_steps: int = 10000,
@@ -37,14 +37,14 @@ class MonteCarloAgent(Agent):
         """
 
         self.reward_function: Final = reward_function
-        self.actions: Final = actions if actions is not None else tuple(Action)
+        self.actions: Final = actions if actions is not None else tuple(GWorldAction)
         self.policy: EpsilonGreedy = EpsilonGreedy(epsilon, actions, epsilon_decay)
         self.gamma = gamma
         self.max_steps = max_steps
         self.q: Q = q_0 if q_0 is not None else {}
-        self.u: dict[tuple[State, Action], int] = {}
+        self.u: dict[tuple[GWorldState, GWorldAction], int] = {}
         self.episode_terminated: bool = False
-        self.visited_states: set[State] = set(x for (x, a) in self.q.keys())
+        self.visited_states: set[GWorldState] = set(x for (x, a) in self.q.keys())
 
         for state in self.visited_states:
             self.policy.update(
@@ -69,8 +69,8 @@ class MonteCarloAgent(Agent):
         return episode_lengths, episode_total_returns
 
     def run_episode(
-        self, world: GridWorld, initial_state: State = None
-    ) -> tuple[list[State], list[float], list[Action]]:
+        self, world: GridWorld, initial_state: GWorldState = None
+    ) -> tuple[list[GWorldState], list[float], list[GWorldAction]]:
         state = initial_state if initial_state is not None else world.initial_state
 
         self.episode_terminated = False
@@ -111,10 +111,10 @@ class MonteCarloAgent(Agent):
 
         return episode_states, episode_rewards, episode_actions
 
-    def _update_visited_states(self, episode_states: Collection[State]):
+    def _update_visited_states(self, episode_states: Collection[GWorldState]):
         self.visited_states = self.visited_states.union(set(episode_states))
 
-    def _update_q(self, fvr: dict[tuple[State, Action], float]):
+    def _update_q(self, fvr: dict[tuple[GWorldState, GWorldAction], float]):
         """
         method to update Q estimates based on the first visit returns.
         This will make changes inplace on the agent Q function
