@@ -2,7 +2,8 @@ from typing import Iterable, Collection
 
 import numpy as np
 
-from abstractions import Action, State, World, PolicyRec, Q, Policy, ActionTypeVar
+from abstractions import Action, State, World, PolicyRec, Q, Policy
+from abstractions.type_vars import ActionTypeVar
 
 
 def get_policy_rec(pi: Policy, world: World, actions: Iterable[Action]) -> PolicyRec:

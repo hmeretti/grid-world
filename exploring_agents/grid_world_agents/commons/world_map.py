@@ -9,13 +9,13 @@ from utils.operations import add_tuples
 class WorldMap:
     def __init__(
         self,
+        actions: list[GWorldAction],
         world_states: set[GWorldState] = None,
-        actions: Collection[GWorldAction] = None,
     ):
         self.world_states: set[GWorldState] = (
             world_states if world_states is not None else set()
         )
-        self.actions: Final = actions if actions is not None else tuple(GWorldAction)
+        self.actions: Final = actions
         self.no_go_coordinates: list[tuple[int, int]] = self._get_no_go_coordinates()
         self.reasonable_actions: dict[
             GWorldState, list[GWorldAction]
