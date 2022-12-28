@@ -1,27 +1,22 @@
-from typing import Final, Collection
+from typing import Final
 
+from abstractions import Agent, RewardFunction, Action, State, Effect, Policy
 from dynamic_programing.policy_improvement import dynamic_programing_gpi
-from grid_world.action import Action
-from grid_world.agents.commons.world_map import WorldMap
+from exploring_agents.grid_world_agents.commons.world_map import WorldMap
+from grid_world.action import GWorldAction
 from grid_world.grid_world import GridWorld
-from grid_world.state import State
-from grid_world.type_aliases import Policy, RewardFunction
-from grid_world.utils.policy import (
-    get_random_policy,
-    sample_action,
-)
-from grid_world.utils.returns import returns_from_reward
-from grid_world.visualization.format_objects import get_world_str
+from grid_world.state import GWorldState
+from utils.policy import get_random_policy
 
 
-class ODPAgent:
+class ODPAgent(Agent):
     def __init__(
-        self,
-        reward_function: RewardFunction,
-        world_shape: tuple[int, int],
-        terminal_coordinates: tuple[int, int] = None,
-        actions: Collection[Action] = None,
-        gamma: float = 1,
+            self,
+            reward_function: RewardFunction,
+            world_shape: tuple[int, int],
+            actions: list[GWorldAction],
+            terminal_coordinates: tuple[int, int] = None,
+            gamma: float = 1,
     ):
         """
         Agent implementing a solution based on dynamic programing.
@@ -45,79 +40,56 @@ class ODPAgent:
         :gamma: the gamma discount value to be used when calculating episode returns
         """
         self.reward_function: Final = reward_function
-        self.actions: Final = actions if actions is not None else tuple(Action)
+        self.actions: Final[list[GWorldAction]] = actions
         self.gamma = gamma
         self.world_map: WorldMap = (
             WorldMap(world_states=set(), actions=self.actions)
             if terminal_coordinates is None
             else WorldMap(
-                world_states={State(terminal_coordinates, "terminal")},
+                world_states={GWorldState(terminal_coordinates, "terminal")},
                 actions=self.actions,
             )
         )
         self.final_state_known = terminal_coordinates is not None
         self.optimal_path_found = False
         self.world_shape = world_shape
+        self.perfect_run = True
         self.policy = (
             self._build_odp_policy(False)
             if self.final_state_known
             else get_random_policy(self.actions)
         )
 
-    def train(
-        self, world: GridWorld, episodes: int = 100, verbose: bool = False
-    ) -> tuple[list[int], list[float]]:
-        episode_lengths = []
-        episode_total_returns = []
-        for episode in range(episodes):
-            episode_states, episode_rewards, _ = self.run_episode(world, verbose)
-            episode_returns = returns_from_reward(episode_rewards, self.gamma)
-            episode_lengths.append(len(episode_states))
-            episode_total_returns.append(episode_returns[0])
-            if verbose:
-                print(f"episode {episode} terminated")
+    def run_update(
+        self, state: GWorldState, action: GWorldAction, effect: Effect, next_state: GWorldState
+    ) -> float:
+        reward = self.reward_function(effect)
 
-        return episode_lengths, episode_total_returns
+        # update our map based on what happened
+        meaningful_update = self.world_map.update_map(state, action, next_state)
 
-    def run_episode(
-        self, world: GridWorld, verbose: bool = False
-    ) -> tuple[list[State], list[float], list[Action]]:
-        state = world.initial_state
-        perfect_run = True
+        # in case we already know the final state, and we hit a wall or trap we need to update the policy
+        if self.final_state_known and meaningful_update:
+            self.policy = self._build_odp_policy()
+            self.perfect_run = False
 
-        episode_states = []
-        episode_actions = []
-        episode_rewards = []
+        return reward
 
-        # run through the world while updating q the policy and our map as we go
-        effect = 0
-        while effect != 1:
-            action = sample_action(self.policy, state, self.actions)
-            new_state, effect = world.take_action(state, action)
-            reward = self.reward_function(effect)
-
-            # update our map based on what happened
-            meaningful_update = self.world_map.update_map(state, action, new_state)
-
-            # in case we already know the final state, and we hit a wall or trap we need to update the policy
-            if self.final_state_known and meaningful_update:
-                self.policy = self._build_odp_policy(verbose)
-                perfect_run = False
-
-            episode_states.append(state)
-            episode_rewards.append(reward)
-            episode_actions.append(action)
-            state = new_state
-
+    def finalize_episode(
+            self,
+            episode_states: list[State],
+            episode_returns: list[float],
+            episode_actions: list[Action],
+    ):
         # in case this wasn't a randon run, and we did not have to make path corrections we have found an optimal path
-        self.optimal_path_found = self.final_state_known and perfect_run
+        self.optimal_path_found = self.final_state_known and self.perfect_run
+        # reset flag for next run
+        self.perfect_run = True
 
         # this triggers after the first successful run, if we didn't know the final state
         if not self.final_state_known:
-            self.policy = self._build_odp_policy(verbose)
+            self.policy = self._build_odp_policy()
             self.final_state_known = True
-
-        return episode_states, episode_rewards, episode_actions
 
     def build_opt_world(self) -> GridWorld:
         return GridWorld(

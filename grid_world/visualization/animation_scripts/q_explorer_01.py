@@ -4,10 +4,11 @@ import os
 path = os.path.dirname(os.path.abspath(__file__))
 sys.path.append("/" + os.path.join(*path.split("/")[:-3]))
 
+from exploring_agents.training import run_episode
 from grid_world.visualization.curses_utils import animate_episodes
-from grid_world.agents.q_explorer_agent import QExplorerAgent
 from notebooks.utils.basics import basic_reward, basic_actions
 from notebooks.utils.worlds import small_world_03
+from exploring_agents.grid_world_agents import QExplorerAgent
 
 
 if __name__ == "__main__":
@@ -25,7 +26,7 @@ if __name__ == "__main__":
     states_history = []
     actions_history = []
     for _ in range(rounds):
-        states, returns, actions = agent.run_episode(world)
+        states, returns, actions = run_episode(agent, world)
         states_history.append(states)
         actions_history.append(actions)
 

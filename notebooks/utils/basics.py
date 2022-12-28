@@ -1,4 +1,4 @@
-from grid_world.action import Action
+from grid_world.action import GWorldAction
 
 
 # this is the basic reward function we will use most of the time
@@ -12,4 +12,9 @@ def basic_reward(e):
 
 
 # most of the time we will work with this limited set of actions
-basic_actions = [Action.up, Action.down, Action.left, Action.right]
+basic_actions = [
+    GWorldAction.up,
+    GWorldAction.down,
+    GWorldAction.left,
+    GWorldAction.right,
+]

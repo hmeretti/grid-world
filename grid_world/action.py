@@ -1,8 +1,11 @@
 from enum import Enum
 from typing import Final
 
+from abstractions import Action
+from abstractions.action import MetaEnumActionClass
 
-class Action(Enum):
+
+class GWorldAction(Action, Enum, metaclass=MetaEnumActionClass):
     up = ((0, 1), " \u2191 ")
     down = ((0, -1), " \u2193 ")
     right = ((1, 0), " \u2192 ")

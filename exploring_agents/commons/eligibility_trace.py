@@ -12,10 +12,10 @@ class EligibilityTrace:
         self.kind = kind
         self.alpha = alpha
 
-    def __call__(self, *x):
+    def __call__(self, *x: any) -> float:
         return self.et_dict.get(x, 0)
 
-    def update(self, *x):
+    def update(self, *x: any):
         self.et_dict.update(
             {
                 y: self.gamma * self.et_lambda * self.et_dict[y]
@@ -23,9 +23,9 @@ class EligibilityTrace:
                 if y != x
             }
         )
-        self.et_dict[tuple(x)] = self._visited_state_update(x)
+        self.et_dict[tuple(x)] = self._visited_arguments_update(x)
 
-    def _visited_state_update(self, x) -> float:
+    def _visited_arguments_update(self, x) -> float:
         if self.kind == "replacing":
             return 1
         elif self.kind == "dutch":
@@ -33,9 +33,12 @@ class EligibilityTrace:
                 *x
             ) + 1
         elif self.kind == "accumulating":
-            return self.gamma * self.et_lambda * self.et_dict.get(x, 0) + 1
+            return self.gamma * self.et_lambda * self.__call__(*x) + 1
         else:
             raise ValueError("kind must be one of: accumulating, dutch, replacing")
 
-    def get_relevant_state_actions(self):
+    def get_relevant_arguments(self) -> list[any]:
         return list(self.et_dict.keys())
+
+    def reset(self):
+        self.et_dict = {}

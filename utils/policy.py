@@ -2,15 +2,11 @@ from typing import Iterable, Collection
 
 import numpy as np
 
-from grid_world.action import Action
-from grid_world.grid_world import GridWorld
-from grid_world.state import State
-from grid_world.type_aliases import PolicyRec, Policy, Q
+from abstractions import Action, State, World, PolicyRec, Q, Policy
+from abstractions.type_vars import ActionTypeVar
 
 
-def get_policy_rec(
-    pi: Policy, world: GridWorld, actions: Iterable[Action]
-) -> PolicyRec:
+def get_policy_rec(pi: Policy, world: World, actions: Iterable[Action]) -> PolicyRec:
     """
     Generate a function  that tells for each state the action which the policy consider the "best"(the
     one it recommends the agent to take more often)
@@ -21,8 +17,6 @@ def get_policy_rec(
     :return: a functions that tells for each state the action which the policy consider the "best"(the
     one it recommends the agent to take more often)
     """
-    if actions is None:
-        actions = Action
 
     pi_rec = {}
     for s in world.states:
@@ -35,7 +29,7 @@ def get_policy_rec(
     return pi_rec
 
 
-def get_random_policy(actions: Collection[Action]) -> Policy:
+def get_random_policy(actions: Collection[Action]):
     """
     Builds a random uniform policy over a set of actions
 
@@ -46,7 +40,7 @@ def get_random_policy(actions: Collection[Action]) -> Policy:
     return lambda s, a: 1 / len(actions)
 
 
-def sample_action(policy: Policy, state: State, actions: Collection[Action]) -> Action:
+def sample_action(policy: Policy, state: State, actions: Collection[ActionTypeVar]) -> ActionTypeVar:
     cum_sum = 0
     n0 = np.random.uniform()
     for action in actions:
@@ -58,12 +52,12 @@ def sample_action(policy: Policy, state: State, actions: Collection[Action]) -> 
             return action
 
     raise ValueError(
-        f"policy adds to: {cum_sum:.5f} over actions: {[x.name for x in actions]} in state: {state.coordinates}"
+        f"policy adds to: {cum_sum:.5f} over actions: {actions} in state: {state}"
     )
 
 
 def get_e_greedy_policy(
-    q: Q, states: Collection[State], actions: Collection[Action], epsilon: float = 0.1
+    q: Q, states: list[State], actions: list[Action], epsilon: float = 0.1
 ):
     """
     This creates an epsilon greedy policy for a Q function. Where we select the prefered
@@ -87,7 +81,7 @@ def get_e_greedy_policy(
     return lambda cs, ca: policy_map.get((cs, ca), 1 / act_len)
 
 
-def get_best_action_from_dict(q: Q, s: State, actions: Collection[Action]) -> Action:
+def get_best_action_from_dict(q: Q, s: State, actions: list[ActionTypeVar]) -> ActionTypeVar:
     best_action = actions[0]
     best_score = q.get((s, best_action), 0)
     if len(actions) > 1:

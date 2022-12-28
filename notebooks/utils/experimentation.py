@@ -3,6 +3,9 @@ import itertools
 import numpy as np
 import pandas as pd
 
+from abstractions import Agent, World
+from exploring_agents.training import train_agent
+
 
 def print_summary(results):
     average_rewards_l10 = {key: (np.mean(results[key][0][-10:])) for key in results}
@@ -21,8 +24,13 @@ def print_summary(results):
 
 # these are some useful functions for experimentation
 def get_results(
-    base_agent, world, base_arguments, extra_parameters, training_rounds, episodes
-):
+    base_agent: type[Agent],
+    world: [World],
+    base_arguments: dict[str, any],
+    extra_parameters: dict[str, any],
+    training_rounds: int,
+    episodes: int,
+) -> tuple[list[list[float]], list[list[int]]]:
     returns = []
     lengths = []
 
@@ -30,7 +38,9 @@ def get_results(
 
         agent = base_agent(**base_arguments, **extra_parameters)
 
-        episode_lengths, episode_returns = agent.train(world=world, episodes=episodes)
+        episode_lengths, episode_returns = train_agent(
+            agent=agent, world=world, episodes=episodes
+        )
         returns.append(episode_returns)
         lengths.append(episode_lengths)
 
@@ -38,8 +48,13 @@ def get_results(
 
 
 def get_exp_results(
-    base_agent, world, base_arguments, arguments, episodes, training_rounds
-):
+    base_agent: type[Agent],
+    world: World,
+    base_arguments: dict[str, any],
+    arguments: dict[str, any],
+    episodes: int,
+    training_rounds: int,
+) -> list[tuple[dict, tuple[list[list[float]], list[list[int]]]]]:
     blown_arguments = [
         {key: values[idx] for idx, key in enumerate(arguments)}
         for values in itertools.product(*[arguments[x] for x in arguments])
@@ -55,7 +70,7 @@ def get_exp_results(
     ]
 
 
-def get_summary_df(results, final_episodes=10):
+def get_summary_df(results, final_episodes=10) -> pd.DataFrame:
     params_keys = list(results[0][0].keys())
     data = [
         [params[key] for key in params_keys]

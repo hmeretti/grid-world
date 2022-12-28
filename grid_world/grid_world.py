@@ -1,8 +1,8 @@
 from typing import Final, Collection, Callable
 
-from grid_world.action import Action
-from grid_world.state import State
-from grid_world.type_aliases import Effect
+from grid_world.action import GWorldAction
+from grid_world.state import GWorldState
+from abstractions import Effect
 
 from utils.operations import add_tuples
 
@@ -15,7 +15,7 @@ class GridWorld:
         initial_state_coordinates: tuple[int, int] = (0, 0),
         walls_coordinates: Collection[tuple[int, int]] = None,
         traps_coordinates: Collection[tuple[int, int]] = None,
-        wind: Callable[[State], Action] = None,
+        wind: Callable[[GWorldState], GWorldAction] = None,
     ):
         """
         This is a class representing a grid world with some simple features.
@@ -48,18 +48,20 @@ class GridWorld:
         """
         self.grid_size: Final[int] = grid_shape[0] * grid_shape[1]
         self.grid_shape: Final = grid_shape
-        self.initial_state: Final[State] = State(initial_state_coordinates, "initial")
-        self.walls_coordinates: Final[Collection[State]] = (
+        self.initial_state: Final[GWorldState] = GWorldState(
+            initial_state_coordinates, "initial"
+        )
+        self.walls_coordinates: Final[Collection[GWorldState]] = (
             walls_coordinates if walls_coordinates else tuple()
         )
-        self.traps_coordinates: Final[Collection[State]] = (
+        self.traps_coordinates: Final[Collection[GWorldState]] = (
             traps_coordinates if traps_coordinates else tuple()
         )
-        self.wind: Final[Callable[[State], Action]] = (
-            wind if wind else (lambda x: Action.wait)
+        self.wind: Final[Callable[[GWorldState], GWorldAction]] = (
+            wind if wind else (lambda x: GWorldAction.wait)
         )
         self.terminal_states_coordinates: Final = terminal_states_coordinates
-        self.states: Final[tuple[State, ...]] = tuple(
+        self.states: Final[tuple[GWorldState, ...]] = tuple(
             [
                 self._coordinates_to_state((i, j))
                 for i in range(grid_shape[0])
@@ -67,9 +69,9 @@ class GridWorld:
                 if (i, j) not in self.walls_coordinates
             ]
         )
-        self.state_effect: Final[dict[State, int]] = self._get_state_effect()
+        self.state_effect: Final[dict[GWorldState, int]] = self._get_state_effect()
 
-    def _get_state_effect(self) -> dict[State, int]:
+    def _get_state_effect(self) -> dict[GWorldState, int]:
         state_effect = {}
         for s in self.states:
             if s.kind == "terminal":
@@ -81,7 +83,9 @@ class GridWorld:
 
         return state_effect
 
-    def take_action(self, state: State, action: Action) -> [State, Effect]:
+    def take_action(
+        self, state: GWorldState, action: GWorldAction
+    ) -> [GWorldState, Effect]:
         """
         Represents the effect of an agent taking an action in the world
 
@@ -113,7 +117,7 @@ class GridWorld:
 
             return state, effect
 
-    def get_state(self, coordinates: tuple[int, int]) -> State:
+    def get_state(self, coordinates: tuple[int, int]) -> GWorldState:
         """
         Gets a state from some coordinates.
         """
@@ -122,7 +126,7 @@ class GridWorld:
         except StopIteration:
             raise KeyError(f"{coordinates} does not correspond to a valid state")
 
-    def _apply_action(self, state: State, action: Action) -> State:
+    def _apply_action(self, state: GWorldState, action: GWorldAction) -> GWorldState:
         coordinates = add_tuples(state.coordinates, action.direction)
         try:
             fs = self._coordinates_to_state(coordinates)
@@ -131,20 +135,20 @@ class GridWorld:
 
         return fs
 
-    def _walkable_state(self, state: State) -> bool:
+    def _walkable_state(self, state: GWorldState) -> bool:
         return (
             (0 <= state.coordinates[0] < self.grid_shape[0])
             and (0 <= state.coordinates[1] < self.grid_shape[1])
             and state.kind != "wall"
         )
 
-    def _coordinates_to_state(self, coordinates: tuple[int, int]) -> State:
+    def _coordinates_to_state(self, coordinates: tuple[int, int]) -> GWorldState:
         if (
             (0 <= coordinates[0] < self.grid_shape[0])
             and (0 <= coordinates[1] < self.grid_shape[1])
             and (kind := self._coordinates_kind(coordinates)) != "wall"
         ):
-            return State(coordinates, kind)
+            return GWorldState(coordinates, kind)
         else:
             raise KeyError(f"{coordinates} does not correspond to a valid state")
 

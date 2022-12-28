@@ -1,8 +1,8 @@
 import numpy as np
 
 
-def add_tuples(a: tuple[int, ...], b: tuple[int, ...]) -> tuple[int, ...]:
-    return tuple(p + q for p, q in zip(a, b))
+def add_tuples(a: tuple[int, int], b: tuple[int, int]) -> tuple[int, int]:
+    return a[0] + b[0], a[1] + b[1]
 
 
 def float_dict_comparison(d0: dict[any, float], d1: dict[any, float]) -> bool:

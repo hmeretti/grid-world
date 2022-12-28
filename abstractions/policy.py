@@ -1,9 +1,10 @@
+from abc import ABC, abstractmethod
 from typing import Any
 
-from dynamic_programing.type_aliases import State, Action
+from abstractions import State, Action
 
 
-class Policy:
+class Policy(ABC):
     """
     Abstract policy class. Concrete extensions should implement
 
@@ -12,8 +13,10 @@ class Policy:
 
     """
 
+    @abstractmethod
     def __call__(self, state: State, action: Action) -> float:
         raise NotImplementedError("__call__ method not implemented")
 
+    @abstractmethod
     def update(self, *args: Any) -> None:
         raise NotImplementedError("update method not implemented")

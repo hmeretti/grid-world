@@ -1,16 +1,13 @@
-from typing import Collection
-
-from grid_world.action import Action
-from grid_world.agents.policies.policy import Policy
-from grid_world.state import State
-from grid_world.type_aliases import DecayFunction
+from grid_world.action import GWorldAction
+from grid_world.state import GWorldState
+from abstractions import DecayFunction, Policy
 
 
 class EpsilonExplorer(Policy):
     def __init__(
         self,
-        epsilon: float = 0.1,
-        actions: Collection[Action] = tuple(Action),
+        epsilon: float,
+        actions: list[GWorldAction],
         epsilon_decay: DecayFunction = None,
     ):
         """
@@ -26,7 +23,7 @@ class EpsilonExplorer(Policy):
         self.reasonable_actions = {}
         self.epsilon_decay = epsilon_decay
 
-    def __call__(self, state: State, action: Action) -> float:
+    def __call__(self, state: GWorldState, action: GWorldAction) -> float:
         valid_actions = self.reasonable_actions.get(state, self.actions)
         if action not in valid_actions:
             return 0
@@ -37,9 +34,9 @@ class EpsilonExplorer(Policy):
 
     def update(
         self,
-        state: State,
-        best_action: Action,
-        valid_actions: list[Action],
+        state: GWorldState,
+        best_action: GWorldAction,
+        valid_actions: list[GWorldAction],
         force_update: bool = False,
     ) -> None:
         if (

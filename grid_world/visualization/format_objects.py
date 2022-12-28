@@ -1,7 +1,7 @@
 import numpy as np
 
 from grid_world.grid_world import GridWorld
-from grid_world.type_aliases import PolicyRec, EvalFunction, State
+from abstractions import PolicyRec, EvalFunction
 from grid_world.visualization.unicode_definitions import states_symbols
 
 

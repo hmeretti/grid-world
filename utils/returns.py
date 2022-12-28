@@ -1,7 +1,6 @@
 from typing import Collection
 
-from grid_world.action import Action
-from grid_world.state import State
+from abstractions import Action, State
 
 
 def returns_from_reward(rewards: Collection[float], gamma: float = 1) -> list[float]:
