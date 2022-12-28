@@ -2,7 +2,7 @@ from typing import Final
 
 from abstractions import Agent, RewardFunction, Action, DecayFunction, State, Effect, Q
 from exploring_agents.commons.eligibility_trace import EligibilityTrace
-from grid_world.agents.policies.epsilon_greedy import EpsilonGreedy
+from exploring_agents.policies.epsilon_greedy import EpsilonGreedy
 from utils.policy import get_best_action_from_dict, sample_action
 
 

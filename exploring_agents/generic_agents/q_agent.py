@@ -1,7 +1,7 @@
 from typing import Final
 
 from abstractions import Agent, RewardFunction, Action, DecayFunction, State, Effect, Q
-from grid_world.agents.policies.epsilon_greedy import EpsilonGreedy
+from exploring_agents.policies.epsilon_greedy import EpsilonGreedy
 from utils.evaluators import best_q_value
 from utils.policy import get_best_action_from_dict
 
