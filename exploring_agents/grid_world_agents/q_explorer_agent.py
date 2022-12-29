@@ -2,8 +2,8 @@ from typing import Final
 
 from abstractions import Agent, RewardFunction, DecayFunction, Effect, Q
 from exploring_agents.grid_world_agents.commons.world_map import WorldMap
+from exploring_agents.policies.epsilon_explorer import EpsilonExplorer
 from grid_world.action import GWorldAction
-from exploring_agents.policies import EpsilonExplorer
 from grid_world.state import GWorldState
 from utils.evaluators import best_q_value
 from utils.policy import get_best_action_from_dict

@@ -30,7 +30,7 @@ class MonteCarloAgent(Agent):
         """
 
         self.reward_function: Final = reward_function
-        self.actions: Final = actions if actions is not None else tuple(GWorldAction)
+        self.actions: Final = actions
         self.policy: EpsilonGreedy = EpsilonGreedy(epsilon, actions, epsilon_decay)
         self.gamma = gamma
         self.max_steps = max_steps
