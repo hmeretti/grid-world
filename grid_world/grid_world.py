@@ -57,9 +57,7 @@ class GridWorld:
         self.traps_coordinates: Final[Collection[GWorldState]] = (
             traps_coordinates if traps_coordinates else tuple()
         )
-        self.wind: Final[Callable[[GWorldState], GWorldAction]] = (
-            wind if wind else (lambda x: GWorldAction.wait)
-        )
+        self.wind: Final[Callable[[GWorldState], GWorldAction]] = wind
         self.terminal_states_coordinates: Final = terminal_states_coordinates
         self.states: Final[tuple[GWorldState, ...]] = tuple(
             [
@@ -96,26 +94,24 @@ class GridWorld:
             1: agent is in a terminal state
             -1: agent is in a 'trap' state
         """
-        effect = self.state_effect[
-            state
-        ]  # effect depends only where we are taking the action
-
         if state.kind == "terminal":
             # if we are in a terminal state nothing happens
-            return state, effect
+            pass
 
         elif state.kind == "trap":
             # if we are in a trap we get sent to the starting position
-            return self.initial_state, effect
+            state = self.initial_state
 
         else:
             # else we make the move
             state = self._apply_action(state, action)
             # then apply the wind effect
-            wind_action = self.wind(state)
-            state = self._apply_action(state, wind_action)
+            if self.wind is not None:
+                wind_action = self.wind(state)
+                state = self._apply_action(state, wind_action)
 
-            return state, effect
+        # effect depends only on the state we ended at
+        return state, self.state_effect[state]
 
     def get_state(self, coordinates: tuple[int, int]) -> GWorldState:
         """
