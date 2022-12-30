@@ -29,11 +29,11 @@ class EligibilityTrace:
         if self.kind == "replacing":
             updated_value = 1
         elif self.kind == "dutch":
-            updated_value = (1 - self.alpha) * self.gamma * self.et_lambda * self.__call__(
-                *x
-            ) + 1
+            updated_value = (
+                1 - self.alpha
+            ) * self.gamma * self.et_lambda * self.__call__(*x) + 1
         elif self.kind == "accumulating":
-            updated_value =  self.gamma * self.et_lambda * self.__call__(*x) + 1
+            updated_value = self.gamma * self.et_lambda * self.__call__(*x) + 1
         else:
             raise ValueError("kind must be one of: accumulating, dutch, replacing")
         self.et_dict[tuple(x)] = updated_value

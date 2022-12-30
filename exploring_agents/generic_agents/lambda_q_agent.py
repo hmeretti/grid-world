@@ -4,7 +4,11 @@ from abstractions import Agent, RewardFunction, Action, DecayFunction, State, Ef
 from exploring_agents.commons.eligibility_trace import EligibilityTrace
 from exploring_agents.policies.epsilon_greedy import EpsilonGreedy
 from utils.evaluators import best_q_value
-from utils.policy import get_best_action_from_dict, sample_action_and_exploration, sample_action
+from utils.policy import (
+    get_best_action_from_dict,
+    sample_action_and_exploration,
+    sample_action,
+)
 
 
 class LambdaQAgent(Agent):
@@ -91,7 +95,9 @@ class LambdaQAgent(Agent):
             )
 
         # update traces: look ahead to see if we will explore
-        self.next_action, has_explored = sample_action_and_exploration(self.policy, next_state, self.actions)
+        self.next_action, has_explored = sample_action_and_exploration(
+            self.policy, next_state, self.actions
+        )
         if has_explored:
             # if so we reset everything
             self.eligibility_trace.reset()

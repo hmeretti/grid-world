@@ -48,7 +48,10 @@ class LambdaSarsaAgent(Agent):
         self.lambda_decay = lambda_decay if lambda_decay is not None else (lambda x: x)
         self.next_action: [None, Action] = None
         self.eligibility_trace = EligibilityTrace(
-            et_lambda=self.et_lambda, gamma=self.gamma, kind=self.et_kind, alpha=self.alpha
+            et_lambda=self.et_lambda,
+            gamma=self.gamma,
+            kind=self.et_kind,
+            alpha=self.alpha,
         )
 
         for state in set(x for (x, a) in self.q.keys()):

@@ -11,10 +11,12 @@ def add_tuples(a: tuple[int, int], b: tuple[int, int]) -> tuple[int, int]:
 
 
 def float_dict_comparison(d0: dict[any, float], d1: dict[any, float]) -> bool:
-    return np.all([np.isclose(d0[x], d1[x]) for x in d0]) and d0.keys() == d1.keys()
+    return d0.keys() == d1.keys() and np.all([np.isclose(d0[x], d1[x]) for x in d0])
 
 
-def order_dict(x: dict[[anyVar], float], reverse: bool = True) -> list[tuple[anyVar, float]]:
+def order_dict(
+    x: dict[[anyVar], float], reverse: bool = True
+) -> list[tuple[anyVar, float]]:
     return sorted(x.items(), key=lambda item: item[1], reverse=reverse)
 
 
