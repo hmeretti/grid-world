@@ -11,12 +11,12 @@ from utils.policy import get_random_policy
 
 class ODPAgent(Agent):
     def __init__(
-            self,
-            reward_function: RewardFunction,
-            world_shape: tuple[int, int],
-            actions: list[GWorldAction],
-            terminal_coordinates: tuple[int, int] = None,
-            gamma: float = 1,
+        self,
+        reward_function: RewardFunction,
+        world_shape: tuple[int, int],
+        actions: list[GWorldAction],
+        terminal_coordinates: tuple[int, int] = None,
+        gamma: float = 1,
     ):
         """
         Agent implementing a solution based on dynamic programing.
@@ -61,7 +61,11 @@ class ODPAgent(Agent):
         )
 
     def run_update(
-        self, state: GWorldState, action: GWorldAction, effect: Effect, next_state: GWorldState
+        self,
+        state: GWorldState,
+        action: GWorldAction,
+        effect: Effect,
+        next_state: GWorldState,
     ) -> float:
         reward = self.reward_function(effect)
 
@@ -76,10 +80,10 @@ class ODPAgent(Agent):
         return reward
 
     def finalize_episode(
-            self,
-            episode_states: list[State],
-            episode_returns: list[float],
-            episode_actions: list[Action],
+        self,
+        episode_states: list[State],
+        episode_returns: list[float],
+        episode_actions: list[Action],
     ):
         # in case this wasn't a randon run, and we did not have to make path corrections we have found an optimal path
         self.optimal_path_found = self.final_state_known and self.perfect_run

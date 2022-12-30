@@ -23,19 +23,20 @@ class EligibilityTrace:
                 if y != x
             }
         )
-        self.et_dict[tuple(x)] = self._visited_arguments_update(x)
+        # self.et_dict[tuple(x)] = self._visited_arguments_update(x)
 
-    def _visited_arguments_update(self, x) -> float:
+    def visited_arguments_update(self, *x) -> None:
         if self.kind == "replacing":
-            return 1
+            updated_value = 1
         elif self.kind == "dutch":
-            return (1 - self.alpha) * self.gamma * self.et_lambda * self.__call__(
+            updated_value = (1 - self.alpha) * self.gamma * self.et_lambda * self.__call__(
                 *x
             ) + 1
         elif self.kind == "accumulating":
-            return self.gamma * self.et_lambda * self.__call__(*x) + 1
+            updated_value =  self.gamma * self.et_lambda * self.__call__(*x) + 1
         else:
             raise ValueError("kind must be one of: accumulating, dutch, replacing")
+        self.et_dict[tuple(x)] = updated_value
 
     def get_relevant_arguments(self) -> list[any]:
         return list(self.et_dict.keys())

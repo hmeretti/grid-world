@@ -68,10 +68,10 @@ class QAgent(Agent):
         return reward
 
     def finalize_episode(
-            self,
-            episode_states: list[State],
-            episode_returns: list[float],
-            episode_actions: list[Action],
+        self,
+        episode_states: list[State],
+        episode_returns: list[float],
+        episode_actions: list[Action],
     ):
         self.policy.decay()
         self.alpha = self.alpha_decay(self.alpha)

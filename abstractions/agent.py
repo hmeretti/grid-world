@@ -22,6 +22,12 @@ class Agent(ABC):
     policy: Policy = NotImplemented
 
     def select_action(self, state: State) -> Action:
+        """
+        selects an action from a state based on the agent policy
+
+        :param state: the state to select the action from
+        :return: the selected action
+        """
         return sample_action(self.policy, state, self.actions)
 
     @abstractmethod

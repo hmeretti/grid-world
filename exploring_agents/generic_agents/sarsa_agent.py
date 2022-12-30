@@ -77,10 +77,10 @@ class SarsaAgent(Agent):
         return reward
 
     def finalize_episode(
-            self,
-            episode_states: list[State],
-            episode_returns: list[float],
-            episode_actions: list[Action],
+        self,
+        episode_states: list[State],
+        episode_returns: list[float],
+        episode_actions: list[Action],
     ):
         self.next_action = None
         self.policy.decay()

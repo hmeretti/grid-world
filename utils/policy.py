@@ -4,6 +4,7 @@ import numpy as np
 
 from abstractions import Action, State, World, PolicyRec, Q, Policy
 from abstractions.type_vars import ActionTypeVar
+from utils.operations import order_callable
 
 
 def get_policy_rec(pi: Policy, world: World, actions: Iterable[Action]) -> PolicyRec:
@@ -40,16 +41,51 @@ def get_random_policy(actions: Collection[Action]):
     return lambda s, a: 1 / len(actions)
 
 
-def sample_action(policy: Policy, state: State, actions: Collection[ActionTypeVar]) -> ActionTypeVar:
+def sample_action(
+    policy: Policy, state: State, actions: list[ActionTypeVar]
+) -> ActionTypeVar:
+    """
+    Selects an action to a certain state following a policy.
+
+    :param policy: the policy we will consider
+    :param state: a state to select the action from
+    :param actions: a list of actions to be considered as options
+    :returns: the selected action
+    """
     cum_sum = 0
     n0 = np.random.uniform()
     for action in actions:
         cum_sum += policy(state, action)
-    cum_sum = 0
-    for action in actions:
-        cum_sum += policy(state, action)
         if n0 <= cum_sum:
             return action
+
+    raise ValueError(
+        f"policy adds to: {cum_sum:.5f} over actions: {actions} in state: {state}"
+    )
+
+
+def sample_action_and_exploration(
+    policy: Policy, state: State, actions: list[ActionTypeVar]
+) -> [ActionTypeVar, bool]:
+    """
+    Selects an action to a certain state following a policy.
+    Also returns information on weather this was an exploration or not.
+    It considers any action different than the most likely as an exploration
+
+    :param policy: the policy we will consider
+    :param state: a state to select the action from
+    :param actions: a list of actions to be considered as options
+    :returns: the selected action, and a flag indicating whether this was the most probable or not
+
+    """
+    n0 = np.random.uniform()
+    ordered_policy = order_callable(lambda a: policy(state, a), actions)
+
+    cum_sum = 0
+    for action, p_value in ordered_policy:
+        cum_sum += p_value
+        if n0 <= cum_sum:
+            return action, n0 > ordered_policy[0][1]
 
     raise ValueError(
         f"policy adds to: {cum_sum:.5f} over actions: {actions} in state: {state}"
@@ -81,7 +117,9 @@ def get_e_greedy_policy(
     return lambda cs, ca: policy_map.get((cs, ca), 1 / act_len)
 
 
-def get_best_action_from_dict(q: Q, s: State, actions: list[ActionTypeVar]) -> ActionTypeVar:
+def get_best_action_from_dict(
+    q: Q, s: State, actions: list[ActionTypeVar]
+) -> ActionTypeVar:
     best_action = actions[0]
     best_score = q.get((s, best_action), 0)
     if len(actions) > 1:

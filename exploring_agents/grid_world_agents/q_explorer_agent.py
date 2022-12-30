@@ -51,7 +51,11 @@ class QExplorerAgent(Agent):
         )
 
     def run_update(
-        self, state: GWorldState, action: GWorldAction, effect: Effect, next_state: GWorldState
+        self,
+        state: GWorldState,
+        action: GWorldAction,
+        effect: Effect,
+        next_state: GWorldState,
     ) -> float:
         reward = self.reward_function(effect)
 
@@ -64,9 +68,9 @@ class QExplorerAgent(Agent):
         )
         cur_q = self.q.get((state, action), 0)
         self.q[state, action] = cur_q + self.alpha * (
-                reward
-                + self.gamma * best_q_value(self.q, next_state, next_valid_actions)
-                - cur_q
+            reward
+            + self.gamma * best_q_value(self.q, next_state, next_valid_actions)
+            - cur_q
         )
 
         # improve from what was learned
@@ -96,10 +100,10 @@ class QExplorerAgent(Agent):
         return reward
 
     def finalize_episode(
-            self,
-            episode_states: list[GWorldState],
-            episode_returns: list[float],
-            episode_actions: list[GWorldAction],
+        self,
+        episode_states: list[GWorldState],
+        episode_returns: list[float],
+        episode_actions: list[GWorldAction],
     ):
         self.policy.decay()
         self.alpha = self.alpha_decay(self.alpha)
