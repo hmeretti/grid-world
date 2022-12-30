@@ -3,10 +3,11 @@ from typing import Final
 from abstractions import Agent, RewardFunction, Action, DecayFunction, State, Effect, Q
 from exploring_agents.commons.eligibility_trace import EligibilityTrace
 from exploring_agents.policies.epsilon_greedy import EpsilonGreedy
-from utils.policy import get_best_action_from_dict, sample_action
+from utils.evaluators import best_q_value
+from utils.policy import get_best_action_from_dict, sample_action_and_exploration, sample_action
 
 
-class LambdaSarsaAgent(Agent):
+class LambdaQAgent(Agent):
     def __init__(
         self,
         reward_function: RewardFunction,
@@ -22,7 +23,7 @@ class LambdaSarsaAgent(Agent):
         q_0: Q = None,
     ):
         """
-        Agent similar to SARSA. Uses eligibility traces to update more state action
+        Agent similar to q-learning. Uses eligibility traces to update more state action
         pairs than the current one.
 
         :param reward_function: the reward function we are trying to maximize
@@ -46,24 +47,19 @@ class LambdaSarsaAgent(Agent):
         self.q: Q = q_0 if q_0 is not None else {}
         self.alpha_decay = alpha_decay if alpha_decay is not None else (lambda x: x)
         self.lambda_decay = lambda_decay if lambda_decay is not None else (lambda x: x)
-        self.next_action: [None, Action] = None
+        self.visited_states: set[State] = set(x for (x, a) in self.q.keys())
+        self.next_action = None
         self.eligibility_trace = EligibilityTrace(
-            et_lambda=self.et_lambda, gamma=self.gamma, kind=self.et_kind, alpha=self.alpha
+            et_lambda=self.et_lambda, gamma=self.gamma, kind=self.et_kind, alpha=alpha
         )
 
-        for state in set(x for (x, a) in self.q.keys()):
+        for state in self.visited_states:
             self.policy.update(
                 state, get_best_action_from_dict(self.q, state, self.actions)
             )
 
     # overriding the method
     def select_action(self, state: State) -> Action:
-        """
-        selects an action from a state based on the agent policy
-
-        :param state: the state to select the action from
-        :return: the selected action
-        """
         return (
             self.next_action
             if self.next_action is not None
@@ -74,13 +70,12 @@ class LambdaSarsaAgent(Agent):
         self, state: State, action: Action, effect: Effect, next_state: State
     ) -> float:
         self.eligibility_trace.visited_arguments_update(state, action)
-        self.next_action = sample_action(self.policy, next_state, self.actions)
         reward = self.reward_function(effect)
 
         # learn from what happened
         delta = (
             reward
-            + self.gamma * self.q.get((next_state, self.next_action), 0)
+            + self.gamma * best_q_value(self.q, next_state, self.actions)
             - self.q.get((state, action), 0)
         )
         update_dict = {
@@ -90,13 +85,19 @@ class LambdaSarsaAgent(Agent):
         self.q.update(update_dict)
 
         # improve from what was learned
-        for cur_state in {state for state, action in update_dict.keys()}:
+        for cur_state in {state for state, actiongi in update_dict.keys()}:
             self.policy.update(
                 cur_state, get_best_action_from_dict(self.q, cur_state, self.actions)
             )
 
-        # update traces
-        self.eligibility_trace.update()
+        # update traces: look ahead to see if we will explore
+        self.next_action, has_explored = sample_action_and_exploration(self.policy, next_state, self.actions)
+        if has_explored:
+            # if so we reset everything
+            self.eligibility_trace.reset()
+        else:
+            # we just update the traces
+            self.eligibility_trace.update()
 
         return reward
 
@@ -107,7 +108,6 @@ class LambdaSarsaAgent(Agent):
         episode_actions: list[Action],
     ):
 
-        self.next_action = None
         self.policy.decay()
         self.alpha = self.alpha_decay(self.alpha)
         self.et_lambda = self.lambda_decay(self.et_lambda)

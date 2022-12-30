@@ -18,5 +18,7 @@ class World(ABC, Generic[StateTypeVar]):
     initial_state: StateTypeVar
 
     @abstractmethod
-    def take_action(self, state: StateTypeVar, action: Action) -> [StateTypeVar, Effect]:
+    def take_action(
+        self, state: StateTypeVar, action: Action
+    ) -> [StateTypeVar, Effect]:
         raise NotImplementedError("take_action method not implemented")

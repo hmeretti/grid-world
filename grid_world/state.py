@@ -15,3 +15,6 @@ class GWorldState(State):
 
     def get_unicode(self) -> str:
         return states_symbols[self.kind]
+
+    def __str__(self):
+        return f"{self.kind} at {self.coordinates}"

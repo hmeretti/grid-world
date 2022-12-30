@@ -19,3 +19,6 @@ class GWorldAction(Action, Enum, metaclass=MetaEnumActionClass):
     def __init__(self, direction: tuple[int, int], unicode: str):
         self.direction: Final = direction
         self.unicode: Final = unicode
+
+    def __str__(self):
+        return f"{self.name}"
