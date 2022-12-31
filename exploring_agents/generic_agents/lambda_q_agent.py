@@ -5,7 +5,7 @@ from exploring_agents.commons.eligibility_trace import EligibilityTrace
 from exploring_agents.policies.epsilon_greedy import EpsilonGreedy
 from utils.evaluators import best_q_value
 from utils.policy import (
-    get_best_action_from_dict,
+    get_best_action_from_q,
     sample_action_and_exploration,
     sample_action,
 )
@@ -59,7 +59,7 @@ class LambdaQAgent(Agent):
 
         for state in self.visited_states:
             self.policy.update(
-                state, get_best_action_from_dict(self.q, state, self.actions)
+                state, get_best_action_from_q(self.q, state, self.actions)
             )
 
     # overriding the method
@@ -91,7 +91,7 @@ class LambdaQAgent(Agent):
         # improve from what was learned
         for cur_state in {state for state, actiongi in update_dict.keys()}:
             self.policy.update(
-                cur_state, get_best_action_from_dict(self.q, cur_state, self.actions)
+                cur_state, get_best_action_from_q(self.q, cur_state, self.actions)
             )
 
         # update traces: look ahead to see if we will explore

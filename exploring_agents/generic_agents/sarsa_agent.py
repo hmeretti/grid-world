@@ -2,7 +2,7 @@ from typing import Final
 
 from abstractions import Agent, RewardFunction, Action, DecayFunction, State, Effect, Q
 from exploring_agents.policies.epsilon_greedy import EpsilonGreedy
-from utils.policy import get_best_action_from_dict, sample_action
+from utils.policy import get_best_action_from_q, sample_action
 
 
 class SarsaAgent(Agent):
@@ -44,7 +44,7 @@ class SarsaAgent(Agent):
 
         for state in self.visited_states:
             self.policy.update(
-                state, get_best_action_from_dict(self.q, state, self.actions)
+                state, get_best_action_from_q(self.q, state, self.actions)
             )
 
     # overriding the method
@@ -71,7 +71,7 @@ class SarsaAgent(Agent):
 
         # improve from what was learned
         self.policy.update(
-            state, get_best_action_from_dict(self.q, state, self.actions)
+            state, get_best_action_from_q(self.q, state, self.actions)
         )
 
         return reward

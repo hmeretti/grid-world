@@ -38,7 +38,7 @@ def get_random_policy(actions: Collection[Action]):
     assumed to be the same for every state
     :return: the random uniform policy
     """
-    return lambda s, a: 1 / len(actions)
+    return lambda s, a: 1 / len(actions) if a in actions else 0
 
 
 def sample_action(
@@ -110,16 +110,25 @@ def get_e_greedy_policy(
     act_len = len(actions)
     p_0 = epsilon / act_len
     for s in states:
-        best_action = get_best_action_from_dict(q, s, actions)
+        best_action = get_best_action_from_q(q, s, actions)
         for a in actions:
             policy_map[s, a] = p_0 + (1 - epsilon if a == best_action else 0)
 
     return lambda cs, ca: policy_map.get((cs, ca), 1 / act_len)
 
 
-def get_best_action_from_dict(
+def get_best_action_from_q(
     q: Q, s: State, actions: list[ActionTypeVar]
 ) -> ActionTypeVar:
+    """
+    Gets, for a given state, the best action from a list of possibilities,
+    based on a Q function. Values missing from Q are assumed to have value 0.
+
+    :param q: the Q dictionary
+    :param s: the state we want to select the action for
+    :param actions: a list of actions to be considered
+    :return: the best action from the list
+    """
     best_action = actions[0]
     best_score = q.get((s, best_action), 0)
     if len(actions) > 1:
@@ -128,43 +137,3 @@ def get_best_action_from_dict(
                 best_score = score
                 best_action = a
     return best_action
-
-
-def get_explorer_policy(
-    q: Q,
-    world_map: set[State],
-    actions: Collection[Action],
-    reasonable_actions: dict[State, Collection[Action]],
-    epsilon: float = 0.1,
-):
-    """
-    This creates a policy similar to epsilon greedy. However, it uses a partial map of the world, and
-    a list of reasonable actions to take at each state to avoid making simple mistakes,
-    like hitting walls and falling into traps. The reasonable actions parameter is responsible for deciding
-    what the police allows or not.
-
-    :param q: the Q function
-    :param world_map: a set of states, representing a partial map of our world
-    :param actions: all possible actions to be considered
-    :param reasonable_actions: reasonable  actions worth exploring
-    :param epsilon: the parameter that names the function
-    :return: our epsilon greedy function
-    """
-    policy_map = {}
-    for s in world_map:
-        best_action = get_best_action_from_dict(
-            q, s, reasonable_actions.get(s, actions)
-        )
-        p_0 = epsilon / len(reasonable_actions[s])
-        for a in actions:
-            policy_map[s, a] = (
-                p_0 + (1 - epsilon if a == best_action else 0)
-                if a in reasonable_actions[s]
-                else 0
-            )
-
-    return (
-        lambda cs, ca: policy_map[cs, ca]
-        if (cs, ca) in policy_map.keys()
-        else 1 / len(actions)
-    )

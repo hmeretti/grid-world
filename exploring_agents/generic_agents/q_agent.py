@@ -3,7 +3,7 @@ from typing import Final
 from abstractions import Agent, RewardFunction, Action, DecayFunction, State, Effect, Q
 from exploring_agents.policies.epsilon_greedy import EpsilonGreedy
 from utils.evaluators import best_q_value
-from utils.policy import get_best_action_from_dict
+from utils.policy import get_best_action_from_q
 
 
 class QAgent(Agent):
@@ -44,7 +44,7 @@ class QAgent(Agent):
 
         for state in self.visited_states:
             self.policy.update(
-                state, get_best_action_from_dict(self.q, state, self.actions)
+                state, get_best_action_from_q(self.q, state, self.actions)
             )
 
     def run_update(
@@ -62,7 +62,7 @@ class QAgent(Agent):
 
         # improve from what was learned
         self.policy.update(
-            state, get_best_action_from_dict(self.q, state, self.actions)
+            state, get_best_action_from_q(self.q, state, self.actions)
         )
 
         return reward

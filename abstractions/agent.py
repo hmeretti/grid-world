@@ -1,7 +1,6 @@
 from abc import ABC, abstractmethod
 
 from abstractions import State, Action, Effect, Policy
-from utils.policy import sample_action
 
 
 class Agent(ABC):
@@ -21,6 +20,7 @@ class Agent(ABC):
     actions: list[Action] = NotImplemented
     policy: Policy = NotImplemented
 
+    @abstractmethod
     def select_action(self, state: State) -> Action:
         """
         selects an action from a state based on the agent policy
@@ -28,7 +28,7 @@ class Agent(ABC):
         :param state: the state to select the action from
         :return: the selected action
         """
-        return sample_action(self.policy, state, self.actions)
+        raise NotImplementedError("select_action method not implemented")
 
     @abstractmethod
     def run_update(

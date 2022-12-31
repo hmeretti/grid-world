@@ -3,7 +3,7 @@ from typing import Final
 from abstractions import Agent, RewardFunction, Action, DecayFunction, State, Effect, Q
 from exploring_agents.commons.eligibility_trace import EligibilityTrace
 from exploring_agents.policies.epsilon_greedy import EpsilonGreedy
-from utils.policy import get_best_action_from_dict, sample_action
+from utils.policy import get_best_action_from_q, sample_action
 
 
 class LambdaSarsaAgent(Agent):
@@ -56,7 +56,7 @@ class LambdaSarsaAgent(Agent):
 
         for state in set(x for (x, a) in self.q.keys()):
             self.policy.update(
-                state, get_best_action_from_dict(self.q, state, self.actions)
+                state, get_best_action_from_q(self.q, state, self.actions)
             )
 
     # overriding the method
@@ -95,7 +95,7 @@ class LambdaSarsaAgent(Agent):
         # improve from what was learned
         for cur_state in {state for state, action in update_dict.keys()}:
             self.policy.update(
-                cur_state, get_best_action_from_dict(self.q, cur_state, self.actions)
+                cur_state, get_best_action_from_q(self.q, cur_state, self.actions)
             )
 
         # update traces
