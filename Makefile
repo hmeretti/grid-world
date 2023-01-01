@@ -10,8 +10,8 @@ PROJECT_NAME = grid_world
 
 .PHONY: environment
 environment: ## create environment
-	pyenv install -s 3.9.5
-	pyenv virtualenv 3.9.5 grid_world
+	pyenv install -s 3.11.1
+	pyenv virtualenv 3.11.1 grid_world
 	pyenv local grid_world
 
 .PHONY: requirements
