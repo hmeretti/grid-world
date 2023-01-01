@@ -9,13 +9,13 @@ from utils.operations import order_callable
 
 def get_policy_rec(pi: Policy, world: World, actions: Iterable[Action]) -> PolicyRec:
     """
-    Generate a function  that tells for each state the action which the policy consider the "best"(the
+    Generate a dict that tells for each state the action which the policy consider the "best"(the
     one it recommends the agent to take more often)
 
     :param pi: a policy, i.e. a function that tells for each state action pair, how likely we should take it
     :param world: the world to which this policy applies
     :param actions: available actions to which this policy applies
-    :return: a functions that tells for each state the action which the policy consider the "best"(the
+    :return: a dict that tells for each state the action which the policy consider the "best"(the
     one it recommends the agent to take more often)
     """
 

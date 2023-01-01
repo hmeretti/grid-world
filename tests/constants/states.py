@@ -11,6 +11,7 @@ class TestState(State):
     def __str__(self):
         return self.name
 
+
 s0 = TestState("s0")
 s1 = TestState("s1")
 s2 = TestState("s2")

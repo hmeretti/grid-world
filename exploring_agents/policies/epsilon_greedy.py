@@ -24,7 +24,10 @@ class EpsilonGreedy(Policy):
         self.epsilon_decay = epsilon_decay
 
     def __call__(self, state: State, action: Action) -> float:
-        return self.policy_map.get((state, action), 1 / len(self.actions))
+        if action in self.actions:
+            return self.policy_map.get((state, action), 1 / len(self.actions))
+        else:
+            raise ValueError(f"action {action} is not part of policy")
 
     def update(
         self, state: State, best_action: Action, force_update: bool = False

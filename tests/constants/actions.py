@@ -11,6 +11,7 @@ class TestAction(Action):
     def __str__(self):
         return self.name
 
+
 a0 = TestAction("a0")
 a1 = TestAction("a1")
 a2 = TestAction("a2")

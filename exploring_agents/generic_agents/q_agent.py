@@ -61,9 +61,7 @@ class QAgent(Agent):
         )
 
         # improve from what was learned
-        self.policy.update(
-            state, get_best_action_from_q(self.q, state, self.actions)
-        )
+        self.policy.update(state, get_best_action_from_q(self.q, state, self.actions))
 
         return reward
 
