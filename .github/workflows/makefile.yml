@@ -13,6 +13,12 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+    
+    - name: prepare to install pyenv
+      run: sudo apt-get update; sudo apt-get install make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncursesw5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev
+
+    - name: install pyenv
+      run: curl https://pyenv.run | bash && # export PATH="$HOME/.pyenv/bin:$PATH" && eval "$(pyenv init --path)" && eval "$(pyenv virtualenv-init -)"
 
     - name: create venv
       run: make environment
