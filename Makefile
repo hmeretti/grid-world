@@ -18,16 +18,6 @@ environment: ## create environment
 requirements: ## install all requirements
 	pip install -Ur requirements.txt 
 
-.PHONY: flake-check
-flake-check: ## check PEP-8 and other standards with flake8
-	@echo ""
-	@echo "\033[33mFlake 8 Standards\033[0m"
-	@echo "\033[33m=================\033[0m"
-	@echo ""
-	@python -m flake8 && echo "\n\n\033[32mSuccess\033[0m\n" || (echo \
-	"\n\n\033[31mFailure\033[0m\n\n\033[34mManually fix the offending \
-	issues\033[0m\n" && exit 1)
-
 .PHONY: black-check
 black-check: ## check Black code style
 	@echo ""
@@ -47,7 +37,11 @@ black-check: ## check Black code style
 black: ## apply the Black code style to code
 	black --exclude="build/|buck-out/|dist/|_build/|pip/|env/|\.pip/|\.git/|\.hg/|\.mypy_cache/|\.tox/|\.venv/" .
 
-.PHONY: init
-init: git-init environment requirements ## initialize project
+.PHONY: unit-test
+unit-test: ## run all tests under test dir
+	pytest tests
 
-.DEFAULT_GOAL := help
+.PHONY: validate
+validate: ## validate project for merging
+	make black-check
+	make unit-test

@@ -2,7 +2,7 @@ from typing import Final
 
 from abstractions import Agent, RewardFunction, Action, DecayFunction, State, Effect, Q
 from exploring_agents.policies.epsilon_greedy import EpsilonGreedy
-from utils.policy import get_best_action_from_dict
+from utils.policy import get_best_action_from_q
 from utils.returns import first_visit_return
 
 
@@ -41,7 +41,7 @@ class MonteCarloAgent(Agent):
 
         for state in self.visited_states:
             self.policy.update(
-                state, get_best_action_from_dict(self.q, state, self.actions)
+                state, get_best_action_from_q(self.q, state, self.actions)
             )
 
     def run_update(
@@ -66,7 +66,7 @@ class MonteCarloAgent(Agent):
         # improve from what we learned
         for cur_state in self.visited_states:
             self.policy.update(
-                cur_state, get_best_action_from_dict(self.q, cur_state, self.actions)
+                cur_state, get_best_action_from_q(self.q, cur_state, self.actions)
             )
 
         self.policy.decay()

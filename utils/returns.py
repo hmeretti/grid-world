@@ -3,7 +3,7 @@ from typing import Collection
 from abstractions import Action, State
 
 
-def returns_from_reward(rewards: Collection[float], gamma: float = 1) -> list[float]:
+def returns_from_reward(rewards: list[float], gamma: float = 1) -> list[float]:
     cum_reward = 0
     cum_rewards_list = []
     for r in reversed(rewards):

@@ -6,7 +6,7 @@ from exploring_agents.policies.epsilon_explorer import EpsilonExplorer
 from grid_world.action import GWorldAction
 from grid_world.state import GWorldState
 from utils.evaluators import best_q_value
-from utils.policy import get_best_action_from_dict
+from utils.policy import get_best_action_from_q
 
 
 class QExplorerAgent(Agent):
@@ -82,7 +82,7 @@ class QExplorerAgent(Agent):
                 )
                 self.policy.update(
                     cur_state,
-                    get_best_action_from_dict(self.q, cur_state, cur_valid_actions),
+                    get_best_action_from_q(self.q, cur_state, cur_valid_actions),
                     cur_valid_actions,
                 )
         else:
@@ -93,7 +93,7 @@ class QExplorerAgent(Agent):
                 )
                 self.policy.update(
                     cur_state,
-                    get_best_action_from_dict(self.q, cur_state, cur_valid_actions),
+                    get_best_action_from_q(self.q, cur_state, cur_valid_actions),
                     cur_valid_actions,
                 )
 

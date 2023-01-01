@@ -1,5 +1,3 @@
-from typing import Collection
-
 from abstractions import Action, State, DecayFunction, Policy
 
 
@@ -11,10 +9,13 @@ class EpsilonGreedy(Policy):
         epsilon_decay: DecayFunction = None,
     ):
         """
-        An epsilon greedy policy, which returns
+        An epsilon greedy policy, which tells the probability of taking an action
+        in a state
 
-        :reward_function: the reward function we are trying to maximize
-        :actions: actions available to the agent
+        :param epsilon: the epsilon parameter
+        :param actions: actions available to the agent
+        :param epsilon_decay: a decaying function that will be applied to epsilon
+        whenever the decay method is called
         """
         self.policy_map = {}
         self.best_action = {}
@@ -23,11 +24,23 @@ class EpsilonGreedy(Policy):
         self.epsilon_decay = epsilon_decay
 
     def __call__(self, state: State, action: Action) -> float:
-        return self.policy_map.get((state, action), 1 / len(self.actions))
+        if action in self.actions:
+            return self.policy_map.get((state, action), 1 / len(self.actions))
+        else:
+            raise ValueError(f"action {action} is not part of policy")
 
     def update(
         self, state: State, best_action: Action, force_update: bool = False
     ) -> None:
+        """
+        Updates probabilities for a state based on what the best action for this
+        state is
+
+        :param state: state to be updated
+        :param best_action: the best action for this state
+        :param force_update: whether we should apply update, even if the best
+        action didn't change
+        """
         if (self.best_action.get(state) != best_action) or force_update:
             self.best_action[state] = best_action
             for cur_a in self.actions:
