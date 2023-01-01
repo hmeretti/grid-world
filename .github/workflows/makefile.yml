@@ -14,11 +14,11 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - name: configure
-      run: ./configure
+    - name: create venv
+      run: make environment
 
     - name: Install dependencies
-      run: make environment && make requirements
+      run: make requirements
 
     - name: Run validate
       run: make validate
