@@ -1,6 +1,8 @@
 from abc import ABC, abstractmethod
 from typing import Generic
 
+import dill
+
 from abstractions import Effect, Policy
 from abstractions.type_vars import ActionTypeVar, StateTypeVar
 
@@ -50,3 +52,12 @@ class Agent(ABC, Generic[ActionTypeVar, StateTypeVar]):
         episode_actions: list[ActionTypeVar],
     ):
         raise NotImplementedError("finalize_episode method not implemented")
+
+    def dump(self, filename: str) -> None:
+        with open(f"{filename}.agent", "wb") as handle:
+            dill.dump(self, handle)
+
+    @staticmethod
+    def load(filename: str):
+        with open(f"{filename}.agent", "rb") as handle:
+            return dill.load(handle)
