@@ -11,8 +11,9 @@ class GridWorld:
     def __init__(
         self,
         grid_shape: tuple[int, int],
-        terminal_states_coordinates: Collection[tuple[int, int]],
+        terminal_states_coordinates: Collection[tuple[int, int]] = None,
         initial_state_coordinates: tuple[int, int] = (0, 0),
+        initial_state_coordinates_2: tuple[int, int] = None,
         walls_coordinates: Collection[tuple[int, int]] = None,
         traps_coordinates: Collection[tuple[int, int]] = None,
         wind: Callable[[GWorldState], GWorldAction] = None,
@@ -51,6 +52,9 @@ class GridWorld:
         self.initial_state: Final[GWorldState] = GWorldState(
             initial_state_coordinates, "initial"
         )
+        self.initial_state_2: Final[GWorldState] = GWorldState(
+            initial_state_coordinates_2, "empty"
+        )
         self.walls_coordinates: Final[Collection[GWorldState]] = (
             walls_coordinates if walls_coordinates else tuple()
         )
@@ -58,7 +62,11 @@ class GridWorld:
             traps_coordinates if traps_coordinates else tuple()
         )
         self.wind: Final[Callable[[GWorldState], GWorldAction]] = wind
-        self.terminal_states_coordinates: Final = terminal_states_coordinates
+        self.terminal_states_coordinates: Final = (
+            terminal_states_coordinates
+            if terminal_states_coordinates is not None
+            else []
+        )
         self.states: Final[tuple[GWorldState, ...]] = tuple(
             [
                 self._coordinates_to_state((i, j))

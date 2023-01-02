@@ -164,3 +164,11 @@ large_world_02 = GridWorld(
         (6, 15),
     ),
 )
+
+# lets have some worlds for tagging
+tagging_world_01 = GridWorld(
+    grid_shape=(6, 6),
+    walls_coordinates=((0, 1), (1, 1), (2, 1), (2, 2), (2, 3), (3, 3)),
+    initial_state_coordinates=(0, 0),
+    initial_state_coordinates_2=(5, 5),
+)
