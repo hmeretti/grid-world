@@ -1,9 +1,11 @@
 from abc import ABC, abstractmethod
+from typing import Generic
 
-from abstractions import State, Action, Effect, Policy
+from abstractions import Effect, Policy
+from abstractions.type_vars import ActionTypeVar, StateTypeVar
 
 
-class Agent(ABC):
+class Agent(ABC, Generic[ActionTypeVar, StateTypeVar]):
     """
     Abstract policy class. Concrete extensions should implement
 
@@ -17,11 +19,11 @@ class Agent(ABC):
         raise NotImplementedError("init not implemented")
 
     gamma: float = NotImplemented
-    actions: list[Action] = NotImplemented
+    actions: list[ActionTypeVar] = NotImplemented
     policy: Policy = NotImplemented
 
     @abstractmethod
-    def select_action(self, state: State) -> Action:
+    def select_action(self, state: StateTypeVar) -> ActionTypeVar:
         """
         selects an action from a state based on the agent policy
 
@@ -32,15 +34,19 @@ class Agent(ABC):
 
     @abstractmethod
     def run_update(
-        self, state: State, action: Action, effect: Effect, next_state: State
+        self,
+        state: StateTypeVar,
+        action: ActionTypeVar,
+        effect: Effect,
+        next_state: StateTypeVar,
     ) -> float:
         raise NotImplementedError("run_update method not implemented")
 
     @abstractmethod
     def finalize_episode(
         self,
-        episode_states: list[State],
+        episode_states: list[StateTypeVar],
         episode_returns: list[float],
-        episode_actions: list[Action],
+        episode_actions: list[ActionTypeVar],
     ):
         raise NotImplementedError("finalize_episode method not implemented")

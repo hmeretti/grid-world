@@ -3,7 +3,7 @@ from typing import Final
 from abstractions import Agent, RewardFunction, Action, DecayFunction, State, Effect, Q
 from exploring_agents.policies.epsilon_greedy import EpsilonGreedy
 from utils.evaluators import best_q_value
-from utils.policy import get_best_action_from_q
+from utils.policy import get_best_action_from_q, sample_action
 
 
 class QAgent(Agent):
@@ -46,6 +46,15 @@ class QAgent(Agent):
             self.policy.update(
                 state, get_best_action_from_q(self.q, state, self.actions)
             )
+
+    def select_action(self, state: State) -> Action:
+        """
+        selects an action from a state based on the agent policy
+
+        :param state: the state to select the action from
+        :return: the selected action
+        """
+        return sample_action(self.policy, state, self.actions)
 
     def run_update(
         self, state: State, action: Action, effect: Effect, next_state: State

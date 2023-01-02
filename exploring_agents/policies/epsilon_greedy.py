@@ -13,7 +13,7 @@ class EpsilonGreedy(Policy):
         in a state
 
         :param epsilon: the epsilon parameter
-        :param actions: actions available to the agent
+        :param actions: actions available to select from
         :param epsilon_decay: a decaying function that will be applied to epsilon
         whenever the decay method is called
         """

@@ -18,3 +18,19 @@ class GWorldState(State):
 
     def __str__(self):
         return f"{self.kind} at {self.coordinates}"
+
+
+@dataclass(frozen=True)
+class TagState(State):
+    coordinates_1: tuple[int, int]
+    coordinates_2: tuple[int, int]
+    kind: str = "empty"
+
+    def __eq__(self, other):
+        return (
+            self.coordinates_1 == other.coordinates_1
+            and self.coordinates_2 == other.coordinates_2
+        )
+
+    def __str__(self):
+        return f"agent 1 at {self.coordinates_1}, agent 2 at {self.coordinates_2}"
