@@ -6,7 +6,7 @@ from exploring_agents.policies.epsilon_explorer import EpsilonExplorer
 from grid_world.action import GWorldAction
 from grid_world.state import GWorldState
 from utils.evaluators import best_q_value
-from utils.policy import get_best_action_from_q
+from utils.policy import get_best_action_from_q, sample_action
 
 
 class QExplorerAgent(Agent):
@@ -49,6 +49,15 @@ class QExplorerAgent(Agent):
         self.world_map: WorldMap = WorldMap(
             world_states=set(x for (x, a) in self.q.keys()), actions=self.actions
         )
+
+    def select_action(self, state: GWorldState) -> GWorldAction:
+        """
+        selects an action from a state based on the agent policy
+
+        :param state: the state to select the action from
+        :return: the selected action
+        """
+        return sample_action(self.policy, state, self.actions)
 
     def run_update(
         self,

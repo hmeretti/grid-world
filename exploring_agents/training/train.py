@@ -7,7 +7,7 @@ def run_episode(
 ) -> tuple[list[State], list[float], list[Action]]:
     state = initial_state if initial_state is not None else world.initial_state
 
-    episode_states = []
+    episode_states = [state]
     episode_rewards = []
     episode_actions = []
 
@@ -19,11 +19,11 @@ def run_episode(
 
         reward = agent.run_update(state, action, effect, next_state)
 
+        state = next_state
+
         episode_states.append(state)
         episode_rewards.append(reward)
         episode_actions.append(action)
-
-        state = next_state
 
     episode_returns = returns_from_reward(episode_rewards, agent.gamma)
     agent.finalize_episode(episode_states, episode_returns, episode_actions)

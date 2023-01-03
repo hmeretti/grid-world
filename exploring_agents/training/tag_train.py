@@ -23,11 +23,11 @@ def run_tag_episode(
     state_1 = initial_state_1 if initial_state_1 is not None else world.initial_state
     state_2 = initial_state_2 if initial_state_2 is not None else world.initial_state_2
 
-    agent_1_states = []
+    agent_1_states = [state_1]
     agent_1_rewards = []
     agent_1_actions = []
 
-    agent_2_states = []
+    agent_2_states = [state_2]
     agent_2_rewards = []
     agent_2_actions = []
 
@@ -46,10 +46,6 @@ def run_tag_episode(
         next_state = TagState(next_state_1.coordinates, state_2.coordinates)
         reward_1 = agent_1.run_update(state, action_1, effect_1, next_state)
 
-        agent_1_states.append(state_1)
-        agent_1_rewards.append(reward_1)
-        agent_1_actions.append(action_1)
-
         # agent 2 taking action
         action_2 = agent_2.select_action(state)
         next_state_2, effect_2 = world.take_action(state_2, action_2)
@@ -59,13 +55,17 @@ def run_tag_episode(
         final_state = TagState(next_state_1.coordinates, next_state_2.coordinates)
         reward_2 = agent_2.run_update(state, action_2, effect_2, final_state)
 
-        agent_2_states.append(state_2)
-        agent_2_rewards.append(reward_2)
-        agent_2_actions.append(action_2)
-
         state_1 = next_state_1
         state_2 = next_state_2
         t += 1
+
+        agent_1_states.append(state_1)
+        agent_1_rewards.append(reward_1)
+        agent_1_actions.append(action_1)
+
+        agent_2_states.append(state_2)
+        agent_2_rewards.append(reward_2)
+        agent_2_actions.append(action_2)
 
     agent_1_returns = returns_from_reward(agent_1_rewards, agent_1.gamma)
     agent_2_returns = returns_from_reward(agent_2_rewards, agent_2.gamma)
