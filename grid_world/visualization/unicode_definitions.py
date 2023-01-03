@@ -4,6 +4,7 @@ states_symbols: dict[str, str] = {
     "trap": " \u2620 ",
     "initial": " \u2690 ",
     "agent": " \u0040 ",
+    "agent2": " \u0023 ",
     "empty": "   ",
 }
 

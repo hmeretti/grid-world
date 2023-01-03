@@ -1,4 +1,4 @@
-from collections import Collection
+from typing import Collection
 
 import numpy as np
 
@@ -67,7 +67,7 @@ def iterative_policy_evaluation(
     :param v0: initial policy to iterate over
     :param gamma: discount factor for rewards
     :param epsilon: stop criteria. Iteration will stop whenever the maximum change on a state
-        evaluation is lower then this
+        evaluation is lower than this
     :return: the evaluation of policy pi
     """
     v = {a: 0 for a in states} if v0 is None else v0.copy()
