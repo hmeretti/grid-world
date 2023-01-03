@@ -22,7 +22,9 @@ def run_tag_episode(
     list[GWorldAction],
 ]:
     state_1_t0 = initial_state_1 if initial_state_1 is not None else world.initial_state
-    state_2_t0 = initial_state_2 if initial_state_2 is not None else world.initial_state_2
+    state_2_t0 = (
+        initial_state_2 if initial_state_2 is not None else world.initial_state_2
+    )
 
     agent_1_states = [state_1_t0]
     agent_1_rewards = []
@@ -40,7 +42,11 @@ def run_tag_episode(
 
     # lets predefine this to make life easier
     initial_state_t0 = TagState(state_1_t0.coordinates, state_2_t0.coordinates)
-    action_1_t0 = agent_1.select_action(initial_state_t0) if next_action_1 is None else next_action_1
+    action_1_t0 = (
+        agent_1.select_action(initial_state_t0)
+        if next_action_1 is None
+        else next_action_1
+    )
     state_1_t1, effect_1_t0 = world.take_action(state_1_t0, action_1_t0)
 
     while effect_1 != 1 and effect_2 != 1:
@@ -62,7 +68,9 @@ def run_tag_episode(
             effect_1 = effect_1_t0
 
         # update agent 1
-        reward_1 = agent_1.run_update(initial_state_t0, action_1_t0, effect_1, initial_state_t1)
+        reward_1 = agent_1.run_update(
+            initial_state_t0, action_1_t0, effect_1, initial_state_t1
+        )
 
         # we need to know what state agent 2 will have at t1 in order to update his function
         # for this we need to already determine what agent 1 will do at t1
@@ -80,7 +88,9 @@ def run_tag_episode(
         else:
             effect_2 = effect_2_t0
 
-        reward_2 = agent_2.run_update(intermediate_state_t0, action_2_t0, effect_2, intermediate_state_t1)
+        reward_2 = agent_2.run_update(
+            intermediate_state_t0, action_2_t0, effect_2, intermediate_state_t1
+        )
 
         # store results
         agent_1_states.append(state_1_t1)
