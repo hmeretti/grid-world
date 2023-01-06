@@ -94,7 +94,6 @@ def animate_tag_episode(
     draw_world(world, console)
     for step, s1 in enumerate(states_1):
         draw_line(f"step: {step}", world.grid_shape[1], console)
-        s2 = states_2[step]
 
         if step > 0:
             restore_world_coordinate(*states_1[step - 1].coordinates, world, console)
@@ -107,11 +106,13 @@ def animate_tag_episode(
             world.grid_shape[1] + 1,
             "Agent 1 action",
         )
+        console.refresh()
 
         # we'll add this, so we don't print a weird move that is saved
-        if s1.coordinates == s2.coordinates:
+        if step > 0 and s1.coordinates == s2.coordinates:
             break
 
+        s2 = states_2[step]
         if step > 0:
             time.sleep(sleep_time)
             restore_world_coordinate(*states_2[step - 1].coordinates, world, console)
@@ -125,9 +126,16 @@ def animate_tag_episode(
             world.grid_shape[1] + 2,
             "Agent 2 action",
         )
+        console.refresh()
         time.sleep(sleep_time)
 
-    time.sleep(3 * sleep_time)
+    draw_line(
+        f"Agent 1 wins" if s1.coordinates == s2.coordinates else "Agent 2 wins",
+        world.grid_shape[1] + 3,
+        console,
+    )
+    console.refresh()
+    time.sleep(10 * sleep_time)
     cursor.show()
     curses.endwin()
 
@@ -145,4 +153,3 @@ def _draw_point_info_for_agent(
         info_pos,
         console,
     )
-    console.refresh()

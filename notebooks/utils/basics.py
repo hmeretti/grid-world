@@ -12,13 +12,13 @@ def basic_reward(e):
 
 
 # this is the basic reward function for an agent trying to prolong an episode
-def basic_running_reward(e):
+def basic_tag_reward(e):
     if e == 1:
-        return 100
-    elif e == -1:
-        return -100
-    else:
         return 1
+    elif e == -1:
+        return -1
+    else:
+        return 0
 
 
 # most of the time we will work with this limited set of actions

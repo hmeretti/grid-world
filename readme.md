@@ -1,5 +1,7 @@
 ## Intro
 
+![](https://github.com/hmeretti/grid-world/blob/main/q_vs_q_world_01.gif)
+
 This project contains a simple grid world simulation and methods for solving the problem, such as dynamic programming and
 reinforcement learning. This is intended as a study on how to implement such methods from scratch in a controlled environment,
 and to provide a simple experimentation setup. It is by no means intended as a general efficient implementation.

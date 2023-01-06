@@ -19,12 +19,14 @@ if __name__ == "__main__":
     world = tagging_world_01
     sleep_time = 1
 
+    # Loading agents
     prefix = f"{base_path}/persistence/agents/"
-    filename1 = "q_agent_1_tagging_world_01"
-    filename2 = "q_agent_2_tagging_world_01"
+    filename1 = "sarsa_agent_1_tagging_world_01"
+    filename2 = "sarsa_agent_2_tagging_world_01"
 
     agent_1 = QAgent.load(f"{prefix}{filename1}")
     agent_2 = QAgent.load(f"{prefix}{filename2}")
+
     (
         agent_1_states,
         agent_1_returns,

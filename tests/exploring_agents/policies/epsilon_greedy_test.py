@@ -59,3 +59,12 @@ class TestEpsilonGreedy:
         assert np.isclose(test_policy(s0, a2), 1 - decayed_epsilon)
         assert np.isclose(test_policy(s1, a0), 1 - decayed_epsilon)
         assert np.isclose(test_policy(s2, a0), 1 / 3)
+
+        # reset epsilon
+        new_epsilon = 0.2
+        test_policy.epsilon = new_epsilon
+        assert np.isclose(test_policy(s0, a0), new_epsilon / 2)
+        assert np.isclose(test_policy(s0, a1), new_epsilon / 2)
+        assert np.isclose(test_policy(s0, a2), 1 - new_epsilon)
+        assert np.isclose(test_policy(s1, a0), 1 - new_epsilon)
+        assert np.isclose(test_policy(s2, a0), 1 / 3)
