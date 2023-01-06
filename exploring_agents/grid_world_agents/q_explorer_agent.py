@@ -29,13 +29,14 @@ class QExplorerAgent(Agent):
 
         This agent is not well suited for stochastic worlds.
 
-        :reward_function: the reward function we are trying to maximize
-        :actions: actions available to the agent
-        :policy: initial policy for the agent
-        :gamma: the gamma discount value to be used when calculating episode returns
-        :alpha: learning rate
-        :epsilon: exploration rate to be considered when building policies
-        :q_0: initial estimates of state-action values, will be considered as a constant 0 if not provided
+        :param reward_function: the reward function we are trying to maximize
+        :param actions: actions available to the agent
+        :param gamma: the gamma discount value to be used when calculating episode returns
+        :param alpha: learning rate
+        :param epsilon: exploration rate to be considered when building policies
+        :param epsilon_decay: a rule to decay the epsilon parameter.
+        :param alpha_decay: a rule to decay the alpha parameter.
+        :param q_0: initial estimates of state-action values, will be considered as a constant 0 if not provided
 
         """
 
@@ -51,12 +52,6 @@ class QExplorerAgent(Agent):
         )
 
     def select_action(self, state: GWorldState) -> GWorldAction:
-        """
-        selects an action from a state based on the agent policy
-
-        :param state: the state to select the action from
-        :return: the selected action
-        """
         return sample_action(self.policy, state, self.actions)
 
     def run_update(

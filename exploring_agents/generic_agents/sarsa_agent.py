@@ -22,14 +22,14 @@ class SarsaAgent(Agent):
         every action, by observing results and bootstrapping values from what is expected to be the best policy
         for the following state.
 
-        :reward_function: the reward function we are trying to maximize
-        :actions: actions available to the agent
-        :gamma: the gamma discount value to be used when calculating episode returns
-        :alpha: learning rate
-        :epsilon: exploration rate to be considered when building policies
-        :epsilon_decay: a rule to decay the epsilon parameter.
-        :alpha_decay: a rule to decay the alpha parameter.
-        :q_0: initial estimates of state-action values, will be considered as a constant 0 if not provided
+        :param reward_function: the reward function we are trying to maximize
+        :param actions: actions available to the agent
+        :param gamma: the gamma discount value to be used when calculating episode returns
+        :param alpha: learning rate
+        :param epsilon: exploration rate to be considered when building policies
+        :param epsilon_decay: a rule to decay the epsilon parameter.
+        :param alpha_decay: a rule to decay the alpha parameter.
+        :param q_0: initial estimates of state-action values, will be considered as a constant 0 if not provided
         """
 
         self.reward_function: Final = reward_function
@@ -58,6 +58,7 @@ class SarsaAgent(Agent):
     def run_update(
         self, state: State, action: Action, effect: Effect, next_state: State
     ) -> float:
+        # determine action to be taken on next state
         self.next_action = sample_action(self.policy, next_state, self.actions)
         reward = self.reward_function(effect)
         self.visited_states.add(next_state)

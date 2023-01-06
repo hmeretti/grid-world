@@ -3,6 +3,9 @@ from enum import Enum
 
 
 class Action(ABC):
+    """
+    Abstract action class
+    """
     pass
 
 

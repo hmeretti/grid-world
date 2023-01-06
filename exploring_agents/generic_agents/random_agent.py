@@ -11,13 +11,11 @@ class RandomAgent(Agent):
         self, reward_function: RewardFunction, actions: list[Action], gamma: float = 1
     ):
         """
-        Agent implementing a solution based on estimating the value of state-action pairs. It updates values after
-        every action, by observing results and bootstrapping values from what is expected to be the best policy
-        for the following state.
+        Agent that chooses an action randomly for any state(from a uniform distribution).
 
-        :reward_function: the reward function we are trying to maximize
-        :actions: actions available to the agent
-        :gamma: the gamma discount value to be used when calculating episode returns
+        :param reward_function: the reward function we
+        :param actions: actions available to the agent
+        :param gamma: the gamma discount value to be used when calculating episode returns
         """
 
         self.reward_function: Final = reward_function
@@ -26,13 +24,6 @@ class RandomAgent(Agent):
         self.gamma = gamma
 
     def select_action(self, state: State) -> Action:
-        """
-        selects an action from a state based on the agent policy
-
-        :param state: the state to select the action from
-        :return: the selected action
-        """
-
         return sample_action(self.policy, state, self.actions)
 
     def run_update(

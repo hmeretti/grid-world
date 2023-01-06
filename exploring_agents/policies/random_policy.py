@@ -19,16 +19,8 @@ class RandomPolicy(Policy):
         else:
             raise ValueError(f"action {action} is not part of policy")
 
-    def update(
-        self, state: State, best_action: Action, force_update: bool = False
-    ) -> None:
+    def update(self) -> None:
         """
-        Updates probabilities for a state based on what the best action for this
-        state is
-
-        :param state: state to be updated
-        :param best_action: the best action for this state
-        :param force_update: whether we should apply update, even if the best
-        action didn't change
+        Do nothing at all
         """
         pass

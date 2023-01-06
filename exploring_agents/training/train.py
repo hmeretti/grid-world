@@ -5,6 +5,14 @@ from utils.returns import returns_from_reward
 def run_episode(
     agent: Agent, world: World, initial_state: State = None
 ) -> tuple[list[State], list[float], list[Action]]:
+    """
+    Runs an episode for a generic task. Can be used for the maze problem.
+
+    :param agent: an agent trying to solve the problem
+    :param world: the world where this will take place
+    :param initial_state: state where the agent starts
+    :return: respectively: episode_states, episode_returns, episode_actions
+    """
     state = initial_state if initial_state is not None else world.initial_state
 
     episode_states = [state]
@@ -36,6 +44,14 @@ def train_agent(
     world: World,
     episodes: int = 100,
 ) -> tuple[list[int], list[float]]:
+    """
+    Trains an agent in a generic task. Can be used for the maze problem.
+
+    :param agent: an agent trying to solve the problem
+    :param world: the world where this will take place
+    :param episodes: how many episodes to run
+    :return: respectively: episode_lengths, episode_total_returns
+    """
     episode_lengths = []
     episode_total_returns = []
     for episode in range(episodes):

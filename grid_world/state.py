@@ -7,6 +7,9 @@ from abstractions import State
 
 @dataclass(frozen=True)
 class GWorldState(State):
+    """
+    State for a grid world
+    """
     coordinates: tuple[int, int]
     kind: str = "empty"
 
@@ -22,6 +25,9 @@ class GWorldState(State):
 
 @dataclass(frozen=True)
 class TagState(State):
+    """
+    State being used in the Tag problem
+    """
     coordinates_1: tuple[int, int]
     coordinates_2: tuple[int, int]
 

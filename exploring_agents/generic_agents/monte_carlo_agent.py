@@ -21,12 +21,12 @@ class MonteCarloAgent(Agent):
         Agent implementing a solution based on estimating the value of state-action pairs. Updates are done whenever
         an episode is complete, and only affect visited states.
 
-        :reward_function: the reward function we are trying to maximize
-        :actions: actions available to the agent
-        :gamma: the gamma discount value to be used when calculating episode returns
-        :epsilon: exploration rate to be considered when building policies
-        :epsilon_decay: a rule to decay the epsilon parameter.
-        :q_0: initial estimates of state-action values, will be considered as a constant 0 if not provided
+        :param reward_function: the reward function we are trying to maximize
+        :param actions: actions available to the agent
+        :param gamma: the gamma discount value to be used when calculating episode returns
+        :param epsilon: exploration rate to be considered when building policies
+        :param epsilon_decay: a rule to decay the epsilon parameter.
+        :param q_0: initial estimates of state-action values, will be considered as a constant 0 if not provided
         """
 
         self.reward_function: Final = reward_function
