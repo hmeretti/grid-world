@@ -19,9 +19,19 @@ class EpsilonGreedy(Policy):
         """
         self.policy_map = {}
         self.best_action = {}
-        self.epsilon = epsilon
+        self._epsilon = epsilon
         self.actions = actions
         self.epsilon_decay = epsilon_decay
+
+    @property
+    def epsilon(self):
+        return self._epsilon
+
+    @epsilon.setter
+    def epsilon(self, new_epsilon):
+        self._epsilon = new_epsilon
+        for state in {x for (x, _) in self.policy_map.keys()}:
+            self.update(state, self.best_action[state], force_update=True)
 
     def __call__(self, state: State, action: Action) -> float:
         if action in self.actions:
@@ -53,5 +63,3 @@ class EpsilonGreedy(Policy):
     def decay(self) -> None:
         if self.epsilon_decay is not None:
             self.epsilon = self.epsilon_decay(self.epsilon)
-            for state in {x for (x, _) in self.policy_map.keys()}:
-                self.update(state, self.best_action[state], force_update=True)

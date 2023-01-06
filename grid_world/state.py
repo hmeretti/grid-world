@@ -24,7 +24,6 @@ class GWorldState(State):
 class TagState(State):
     coordinates_1: tuple[int, int]
     coordinates_2: tuple[int, int]
-    kind: str = "empty"
 
     def __eq__(self, other):
         return (

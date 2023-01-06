@@ -166,9 +166,53 @@ large_world_02 = GridWorld(
 )
 
 # lets have some worlds for tagging
+tagging_world_00 = GridWorld(
+    grid_shape=(6, 6),
+    initial_state_coordinates=(0, 0),
+    initial_state_coordinates_2=(5, 5),
+)
+
+
 tagging_world_01 = GridWorld(
     grid_shape=(6, 6),
     walls_coordinates=((0, 1), (1, 1), (2, 1), (2, 2), (2, 3), (3, 3)),
     initial_state_coordinates=(0, 0),
     initial_state_coordinates_2=(5, 5),
+)
+
+tagging_world_02 = GridWorld(
+    grid_shape=(8, 10),
+    initial_state_coordinates=(0, 0),
+    initial_state_coordinates_2=(5, 6),
+    walls_coordinates=(
+        (0, 3),
+        (1, 1),
+        (1, 3),
+        (1, 4),
+        (1, 6),
+        (1, 9),
+        (2, 1),
+        (2, 6),
+        (3, 1),
+        (3, 3),
+        (3, 4),
+        (3, 5),
+        (3, 6),
+        (3, 8),
+        (3, 9),
+        (4, 5),
+        (5, 1),
+        (5, 2),
+        (5, 4),
+        (5, 5),
+        (5, 8),
+        (6, 5),
+        (6, 6),
+        (6, 7),
+        (6, 8),
+        (7, 0),
+        (7, 1),
+        (7, 2),
+        (7, 3),
+    ),
 )

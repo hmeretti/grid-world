@@ -53,7 +53,7 @@ class GridWorld:
             initial_state_coordinates, "initial"
         )
         self.initial_state_2: Final[GWorldState] = GWorldState(
-            initial_state_coordinates_2, "empty"
+            initial_state_coordinates_2, "initial"
         )
         self.walls_coordinates: Final[Collection[GWorldState]] = (
             walls_coordinates if walls_coordinates else tuple()
@@ -163,7 +163,7 @@ class GridWorld:
             return "wall"
         elif coordinates in self.traps_coordinates:
             return "trap"
-        elif coordinates == self.initial_state.coordinates:
+        elif coordinates in [self.initial_state.coordinates, self.initial_state_2.coordinates]:
             return "initial"
         else:
             return "empty"
