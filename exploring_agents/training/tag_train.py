@@ -131,7 +131,7 @@ def train_tag_agents(
     world: GridWorld,
     episodes: int = 1000,
     episode_max_length: int = 1000,
-    randomize_starting_positions: bool = False
+    randomize_starting_positions: bool = False,
 ) -> tuple[list[int], list[float], list[float]]:
     episode_lengths = []
     agent_1_total_returns = []
@@ -139,8 +139,16 @@ def train_tag_agents(
 
     for episode in range(episodes):
         # select starting positions
-        pos_1 = select_random_state(world) if randomize_starting_positions else world.initial_state
-        pos_2 = select_random_state(world, [pos_1]) if randomize_starting_positions else world.initial_state_2
+        pos_1 = (
+            select_random_state(world)
+            if randomize_starting_positions
+            else world.initial_state
+        )
+        pos_2 = (
+            select_random_state(world, [pos_1])
+            if randomize_starting_positions
+            else world.initial_state_2
+        )
 
         # run episode
         _, agent_1_returns, agent_1_actions, _, agent_2_returns, _ = run_tag_episode(
@@ -149,7 +157,7 @@ def train_tag_agents(
             world=world,
             episode_max_length=episode_max_length,
             initial_state_1=pos_1,
-            initial_state_2=pos_2
+            initial_state_2=pos_2,
         )
 
         # store results

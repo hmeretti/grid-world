@@ -163,7 +163,10 @@ class GridWorld:
             return "wall"
         elif coordinates in self.traps_coordinates:
             return "trap"
-        elif coordinates in [self.initial_state.coordinates, self.initial_state_2.coordinates]:
+        elif coordinates in [
+            self.initial_state.coordinates,
+            self.initial_state_2.coordinates,
+        ]:
             return "initial"
         else:
             return "empty"
