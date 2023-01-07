@@ -37,11 +37,11 @@ black-check: ## check Black code style
 black: ## apply the Black code style to code
 	black --exclude="build/|buck-out/|dist/|_build/|pip/|env/|\.pip/|\.git/|\.hg/|\.mypy_cache/|\.tox/|\.venv/" .
 
-.PHONY: unit-test
-unit-test: ## run all tests under test dir
+.PHONY: test
+test: ## run all tests under test dir
 	pytest tests
 
 .PHONY: validate
 validate: ## validate project for merging
 	make black-check
-	make unit-test
+	make test
