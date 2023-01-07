@@ -1,9 +1,8 @@
 from typing import Final
 
-from abstractions import Agent, RewardFunction, Action, DecayFunction, State, Effect, Q
-from exploring_agents.policies.epsilon_greedy import EpsilonGreedy
+from abstractions import Agent, RewardFunction, Action, State, Effect
 from exploring_agents.policies.random_policy import RandomPolicy
-from utils.policy import get_best_action_from_q, sample_action
+from utils.policy import sample_action
 
 
 class RandomAgent(Agent):

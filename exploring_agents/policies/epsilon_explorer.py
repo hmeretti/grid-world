@@ -35,7 +35,12 @@ class EpsilonExplorer(Policy):
     def epsilon(self, new_epsilon):
         self._epsilon = new_epsilon
         for state in {x for (x, _) in self.policy_map.keys()}:
-            self.update(state, self.best_action[state], self.reasonable_actions[state], force_update=True)
+            self.update(
+                state,
+                self.best_action[state],
+                self.reasonable_actions[state],
+                force_update=True,
+            )
 
     def __call__(self, state: GWorldState, action: GWorldAction) -> float:
         valid_actions = self.reasonable_actions.get(state, self.actions)

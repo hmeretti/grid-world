@@ -10,11 +10,15 @@ class GWorldState(State):
     """
     State for a grid world
     """
+
     coordinates: tuple[int, int]
     kind: str = "empty"
 
     def __add__(self, other: tuple[int, int]) -> tuple[int, int]:
         return self.coordinates[0] + other[1], self.coordinates[1] + other[1]
+
+    def __eq__(self, other):
+        return self.coordinates == other.coordinates and self.kind == other.kind
 
     def get_unicode(self) -> str:
         return states_symbols[self.kind]
@@ -26,8 +30,9 @@ class GWorldState(State):
 @dataclass(frozen=True)
 class TagState(State):
     """
-    State being used in the Tag problem
+    State for the Tag problem
     """
+
     coordinates_1: tuple[int, int]
     coordinates_2: tuple[int, int]
 

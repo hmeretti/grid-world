@@ -6,6 +6,7 @@ class Action(ABC):
     """
     Abstract action class
     """
+
     pass
 
 

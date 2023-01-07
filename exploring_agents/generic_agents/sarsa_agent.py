@@ -48,10 +48,20 @@ class SarsaAgent(Agent):
             )
 
     # overriding the method
-    def select_action(self, state: State) -> Action:
+    def select_action(self, state: State, use_cached_action: bool = True) -> Action:
+        """
+        selects an action from a state based on the agent policy
+        during training we select the next action to be taken whenever we run an update
+        we can bypass this behaviour with use_cached_action
+
+        :param state: the state to select the action from
+        :param use_cached_action: flag indicating whether we should use pre-selected action
+        :return: the selected action
+        """
+
         return (
             self.next_action
-            if self.next_action is not None
+            if self.next_action is not None and use_cached_action
             else sample_action(self.policy, state, self.actions)
         )
 

@@ -9,6 +9,7 @@ class GWorldAction(Action, Enum, metaclass=MetaEnumActionClass):
     """
     Actions for the grid world
     """
+
     up = ((0, 1), " \u2191 ")
     down = ((0, -1), " \u2193 ")
     right = ((1, 0), " \u2192 ")
