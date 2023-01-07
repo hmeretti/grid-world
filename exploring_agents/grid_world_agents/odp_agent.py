@@ -6,7 +6,7 @@ from exploring_agents.grid_world_agents.commons.world_map import WorldMap
 from grid_world.action import GWorldAction
 from grid_world.grid_world import GridWorld
 from grid_world.state import GWorldState
-from utils.policy import get_random_policy
+from utils.policy import get_random_policy, sample_action
 
 
 class ODPAgent(Agent):
@@ -33,11 +33,11 @@ class ODPAgent(Agent):
         world bigger shouldn't affect the final solution, but can make exploration longer, and will make the DP gpi
         algorithm slower.
 
-        :reward_function: the reward function we are trying to maximize
-        :world_height: height of the optimistic world we will consider
-        :world_length: length of the optimistic world we will consider
-        :actions: actions available to the agent
-        :gamma: the gamma discount value to be used when calculating episode returns
+        :param reward_function: the reward function we are trying to maximize
+        :param world_shape: shape of the optimistic world we will consider
+        :param actions: actions available to the agent
+        :param terminal_coordinates: optional terminal coordinates to help agent build policy
+        :param gamma: the gamma discount value to be used when calculating episode returns
         """
         self.reward_function: Final = reward_function
         self.actions: Final[list[GWorldAction]] = actions
@@ -55,10 +55,13 @@ class ODPAgent(Agent):
         self.world_shape = world_shape
         self.perfect_run = True
         self.policy = (
-            self._build_odp_policy(False)
+            self._build_odp_policy()
             if self.final_state_known
             else get_random_policy(self.actions)
-        )
+        )  # TODO use proper policy class instead(random one already exists)
+
+    def select_action(self, state: State) -> Action:
+        return sample_action(self.policy, state, self.actions)
 
     def run_update(
         self,
@@ -124,7 +127,7 @@ class ODPAgent(Agent):
     def _get_world_model(world):
         return lambda s, a: lambda x: 1 if x == world.take_action(s, a)[0] else 0
 
-    def _build_odp_policy(self, verbose: bool = False) -> Policy:
+    def _build_odp_policy(self) -> Policy:
         world = self.build_opt_world()
         world_model = self._get_world_model(world)
 
@@ -139,6 +142,5 @@ class ODPAgent(Agent):
             reward_function=lambda x, y: rewards_dict[(x, y)],
             actions=self.actions,
             states=world.states,
-            verbose=verbose,
         )
         return policy

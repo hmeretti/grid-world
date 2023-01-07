@@ -9,10 +9,6 @@ class World(ABC, Generic[StateTypeVar]):
     """
     Abstract world class. A world for us is anything that has some states, and can
     receive an action to take one state to another.
-
-    :__call__: the function that tells for each state, the probability of an action
-    :update: a function to update the policy
-
     """
 
     states: list[StateTypeVar]

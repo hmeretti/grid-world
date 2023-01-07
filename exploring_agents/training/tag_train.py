@@ -3,7 +3,6 @@ from exploring_agents.training.commons import select_random_state
 from grid_world.action import GWorldAction
 from grid_world.grid_world import GridWorld
 from grid_world.state import TagState, GWorldState
-from utils.operations import add_tuples
 from utils.returns import returns_from_reward
 
 
@@ -22,6 +21,19 @@ def run_tag_episode(
     list[float],
     list[GWorldAction],
 ]:
+    """
+    Runs a tag episode between two agents in a given world
+
+    :param agent_1: agent trying to catch
+    :param agent_2: agent trying to run
+    :param world: where the action will take place
+    :param initial_state_1: initial position for agent 1
+    :param initial_state_2: initial position for agent 2
+    :param episode_max_length: how long agent 2 has to survive in order to win the episode
+    :return: information about the episode: agent_1_states, agent_1_returns,
+    agent_1_actions, agent_2_states, agent_2_returns, agent_2_actions
+
+    """
     state_1_t0 = initial_state_1 if initial_state_1 is not None else world.initial_state
     state_2_t0 = (
         initial_state_2 if initial_state_2 is not None else world.initial_state_2
@@ -133,6 +145,18 @@ def train_tag_agents(
     episode_max_length: int = 1000,
     randomize_starting_positions: bool = False,
 ) -> tuple[list[int], list[float], list[float]]:
+    """
+    Runs a training loop for the tag problem
+
+    :param agent_1: agent trying to catch
+    :param agent_2: agent trying to run
+    :param world: the world where it will take place
+    :param episodes: how many episodes we will run
+    :param episode_max_length: how long agent 2 has to survive in order to win an episode
+    :param randomize_starting_positions: whether agents should start from random or designated positions
+    :return: information about the training process, respectively: episode_lengths,
+    agent_1_total_returns, agent_2_total_returns
+    """
     episode_lengths = []
     agent_1_total_returns = []
     agent_2_total_returns = []

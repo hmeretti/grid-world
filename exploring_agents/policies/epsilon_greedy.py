@@ -61,5 +61,8 @@ class EpsilonGreedy(Policy):
                 )
 
     def decay(self) -> None:
+        """
+        Decay the value of epsilon and update the policy accordingly
+        """
         if self.epsilon_decay is not None:
             self.epsilon = self.epsilon_decay(self.epsilon)

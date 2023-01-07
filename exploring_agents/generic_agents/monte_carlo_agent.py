@@ -2,7 +2,7 @@ from typing import Final
 
 from abstractions import Agent, RewardFunction, Action, DecayFunction, State, Effect, Q
 from exploring_agents.policies.epsilon_greedy import EpsilonGreedy
-from utils.policy import get_best_action_from_q
+from utils.policy import get_best_action_from_q, sample_action
 from utils.returns import first_visit_return
 
 
@@ -21,12 +21,12 @@ class MonteCarloAgent(Agent):
         Agent implementing a solution based on estimating the value of state-action pairs. Updates are done whenever
         an episode is complete, and only affect visited states.
 
-        :reward_function: the reward function we are trying to maximize
-        :actions: actions available to the agent
-        :gamma: the gamma discount value to be used when calculating episode returns
-        :epsilon: exploration rate to be considered when building policies
-        :epsilon_decay: a rule to decay the epsilon parameter.
-        :q_0: initial estimates of state-action values, will be considered as a constant 0 if not provided
+        :param reward_function: the reward function we are trying to maximize
+        :param actions: actions available to the agent
+        :param gamma: the gamma discount value to be used when calculating episode returns
+        :param epsilon: exploration rate to be considered when building policies
+        :param epsilon_decay: a rule to decay the epsilon parameter.
+        :param q_0: initial estimates of state-action values, will be considered as a constant 0 if not provided
         """
 
         self.reward_function: Final = reward_function
@@ -43,6 +43,9 @@ class MonteCarloAgent(Agent):
             self.policy.update(
                 state, get_best_action_from_q(self.q, state, self.actions)
             )
+
+    def select_action(self, state: State) -> Action:
+        return sample_action(self.policy, state, self.actions)
 
     def run_update(
         self, state: State, action: Action, effect: Effect, next_state: State

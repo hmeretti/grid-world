@@ -39,6 +39,7 @@ class GridWorld:
         :param terminal_states_coordinates: coordinates for terminal states, actions in these return an effect of +1
             and won't move the agent
         :param initial_state_coordinates: coordinates for a initial state
+        :param initial_state_coordinates_2: coordinates for a second initial state(not always useful)
         :param walls_coordinates: coordinates for walls, these will be blocked so the agent can't enter then;
             walls are not valid states
         :param traps_coordinates: coordinates for traps. These are valid states, however taking action in then will

@@ -22,14 +22,14 @@ class SarsaAgent(Agent):
         every action, by observing results and bootstrapping values from what is expected to be the best policy
         for the following state.
 
-        :reward_function: the reward function we are trying to maximize
-        :actions: actions available to the agent
-        :gamma: the gamma discount value to be used when calculating episode returns
-        :alpha: learning rate
-        :epsilon: exploration rate to be considered when building policies
-        :epsilon_decay: a rule to decay the epsilon parameter.
-        :alpha_decay: a rule to decay the alpha parameter.
-        :q_0: initial estimates of state-action values, will be considered as a constant 0 if not provided
+        :param reward_function: the reward function we are trying to maximize
+        :param actions: actions available to the agent
+        :param gamma: the gamma discount value to be used when calculating episode returns
+        :param alpha: learning rate
+        :param epsilon: exploration rate to be considered when building policies
+        :param epsilon_decay: a rule to decay the epsilon parameter.
+        :param alpha_decay: a rule to decay the alpha parameter.
+        :param q_0: initial estimates of state-action values, will be considered as a constant 0 if not provided
         """
 
         self.reward_function: Final = reward_function
@@ -48,16 +48,27 @@ class SarsaAgent(Agent):
             )
 
     # overriding the method
-    def select_action(self, state: State) -> Action:
+    def select_action(self, state: State, use_cached_action: bool = True) -> Action:
+        """
+        selects an action from a state based on the agent policy
+        during training we select the next action to be taken whenever we run an update
+        we can bypass this behaviour with use_cached_action
+
+        :param state: the state to select the action from
+        :param use_cached_action: flag indicating whether we should use pre-selected action
+        :return: the selected action
+        """
+
         return (
             self.next_action
-            if self.next_action is not None
+            if self.next_action is not None and use_cached_action
             else sample_action(self.policy, state, self.actions)
         )
 
     def run_update(
         self, state: State, action: Action, effect: Effect, next_state: State
     ) -> float:
+        # determine action to be taken on next state
         self.next_action = sample_action(self.policy, next_state, self.actions)
         reward = self.reward_function(effect)
         self.visited_states.add(next_state)
