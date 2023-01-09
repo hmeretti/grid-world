@@ -3,7 +3,9 @@ from abstractions import Policy, Action, State
 
 class GreedyPolicy(Policy):
     def __init__(
-        self, actions: tuple[Action, ...] = None, policy_map: dict[[State], Action] = None
+        self,
+        actions: tuple[Action, ...] = None,
+        policy_map: dict[[State], Action] = None,
     ):
         """
         A greedy policy, which tells the probability of taking an action in a state

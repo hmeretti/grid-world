@@ -7,7 +7,10 @@ from utils.policy import sample_action
 
 class RandomAgent(Agent):
     def __init__(
-        self, reward_function: RewardFunction, actions: tuple[Action, ...], gamma: float = 1
+        self,
+        reward_function: RewardFunction,
+        actions: tuple[Action, ...],
+        gamma: float = 1,
     ):
         """
         Agent that chooses an action randomly for any state(from a uniform distribution).

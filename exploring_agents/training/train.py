@@ -4,7 +4,9 @@ from utils.returns import returns_from_reward
 
 
 def run_episode(
-    agent: Agent[ActionTypeVar, StateTypeVar], world: World, initial_state: StateTypeVar = None
+    agent: Agent[ActionTypeVar, StateTypeVar],
+    world: World,
+    initial_state: StateTypeVar = None,
 ) -> tuple[list[StateTypeVar], list[float], list[StateTypeVar]]:
     """
     Runs an episode for a generic task. Can be used for the maze problem.
