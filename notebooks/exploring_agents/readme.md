@@ -13,7 +13,7 @@ They are listed below in what I believe is the natural order for reading then.
 Monte carlo is in some sense the most straight forward(maybe even naive) way of solving the problem; 
 it is also not particularly efficient.
 
-In this notebook we go through a step by step implementation of the first visit monte carlo algorithm.
+This is a very brief display of how we can use the algorithm to tackle the problem.
 
 ---
 
