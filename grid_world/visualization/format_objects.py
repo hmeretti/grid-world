@@ -1,7 +1,7 @@
 import numpy as np
 
 from grid_world.grid_world import GridWorld
-from abstractions import PolicyRec, EvalFunction
+from abstractions import PolicyRec, StateEvalDict
 from grid_world.visualization.unicode_definitions import states_symbols
 
 
@@ -23,7 +23,7 @@ def get_policy_rec_str(d: PolicyRec, world: GridWorld) -> str:
     return dict_str
 
 
-def get_policy_eval_str(v: EvalFunction, world: GridWorld) -> str:
+def get_policy_eval_str(v: StateEvalDict, world: GridWorld) -> str:
     v0 = {x: f"{v[x]:.2f}" for x in v}
     ml = np.max([len(x) for x in v0.values()])
     spaces = " " * ml

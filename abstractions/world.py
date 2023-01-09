@@ -11,7 +11,7 @@ class World(ABC, Generic[StateTypeVar]):
     receive an action to take one state to another.
     """
 
-    states: list[StateTypeVar]
+    states: tuple[StateTypeVar, ...]
     initial_state: StateTypeVar
 
     @abstractmethod

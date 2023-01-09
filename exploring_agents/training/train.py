@@ -1,10 +1,11 @@
-from abstractions import Action, Agent, State, World
+from abstractions import Agent, World
+from abstractions.type_vars import StateTypeVar, ActionTypeVar
 from utils.returns import returns_from_reward
 
 
 def run_episode(
-    agent: Agent, world: World, initial_state: State = None
-) -> tuple[list[State], list[float], list[Action]]:
+    agent: Agent[ActionTypeVar, StateTypeVar], world: World, initial_state: StateTypeVar = None
+) -> tuple[list[StateTypeVar], list[float], list[StateTypeVar]]:
     """
     Runs an episode for a generic task. Can be used for the maze problem.
 

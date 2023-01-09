@@ -4,7 +4,7 @@ from abstractions import Action, State, Policy
 class RandomPolicy(Policy):
     def __init__(
         self,
-        actions: list[Action] = None,
+        actions: tuple[Action, ...] = None,
     ):
         """
         A random(uniform) policy over a set of actions

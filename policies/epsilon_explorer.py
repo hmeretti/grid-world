@@ -7,7 +7,7 @@ class EpsilonExplorer(Policy):
     def __init__(
         self,
         epsilon: float,
-        actions: list[GWorldAction],
+        actions: tuple[GWorldAction],
         epsilon_decay: DecayFunction = None,
     ):
         """

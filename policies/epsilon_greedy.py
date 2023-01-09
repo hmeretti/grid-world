@@ -5,7 +5,7 @@ class EpsilonGreedy(Policy):
     def __init__(
         self,
         epsilon: float = 0.1,
-        actions: list[Action] = None,
+        actions: tuple[Action, ...] = None,
         epsilon_decay: DecayFunction = None,
     ):
         """

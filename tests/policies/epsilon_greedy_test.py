@@ -2,7 +2,7 @@ import numpy as np
 import pytest
 
 from exploring_agents.commons.dacaying_functions import get_exp_decay
-from exploring_agents.policies.epsilon_greedy import EpsilonGreedy
+from policies import EpsilonGreedy
 from tests.constants.actions import a0, a1, a2, a3
 from tests.constants.states import s0, s1, s2
 
@@ -13,7 +13,7 @@ class TestEpsilonGreedy:
         epsilon = 0.1
         decay_func = get_exp_decay()
         test_policy = EpsilonGreedy(
-            epsilon=epsilon, actions=[a0, a1, a2], epsilon_decay=decay_func
+            epsilon=epsilon, actions=(a0, a1, a2), epsilon_decay=decay_func
         )
 
         # test on empty states

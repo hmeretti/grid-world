@@ -1,5 +1,3 @@
-from typing import Collection
-
 from abstractions import Action, State
 
 

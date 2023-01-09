@@ -2,7 +2,7 @@ from typing import Final
 
 from abstractions import Agent, RewardFunction, DecayFunction, Effect, Q
 from exploring_agents.grid_world_agents.commons.world_map import WorldMap
-from exploring_agents.policies.epsilon_explorer import EpsilonExplorer
+from policies import EpsilonExplorer
 from grid_world.action import GWorldAction
 from grid_world.state import GWorldState
 from utils.evaluators import best_q_value
@@ -13,7 +13,7 @@ class QExplorerAgent(Agent):
     def __init__(
         self,
         reward_function: RewardFunction,
-        actions: list[GWorldAction],
+        actions: tuple[GWorldAction],
         gamma: float = 1,
         alpha: float = 0.1,
         epsilon: float = 0.1,
@@ -42,7 +42,7 @@ class QExplorerAgent(Agent):
 
         self.reward_function: Final = reward_function
         self.policy: EpsilonExplorer = EpsilonExplorer(epsilon, actions, epsilon_decay)
-        self.actions: list[GWorldAction] = actions
+        self.actions: tuple[GWorldAction] = actions
         self.gamma = gamma
         self.alpha = alpha
         self.q: Q = q_0 if q_0 is not None else {}
