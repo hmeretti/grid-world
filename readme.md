@@ -10,7 +10,7 @@ which are not available for the #.
 The project contains a simple grid world simulation and defines two distinct problems:
 
 * the maze: where an agent is trying to navigate the world and reach a specific destination
-* a tag game: where two agents play against each other, one trying to catch and the other trying to run.
+* the tag game: where two agents play against each other, one trying to catch and the other trying to run.
 
 We explore methods for solving these problems, such as dynamic programming and reinforcement learning. 
 
@@ -22,7 +22,7 @@ Every thing here is heavily based on the book
 from Richard S. Sutton and Andrew G. Barto(which is awsome).
 
 For a quick overview of the problem and notation I recommend checking the [intro notebook](https://github.com/hmeretti/grid-world/blob/main/intro.ipynb) 
-on the root folder of this project.
+on the root folder of this project. Some interesting notebooks about the maze problem can be found [here](https://github.com/hmeretti/grid-world/tree/main/notebooks/exploring_agents); and [here](https://github.com/hmeretti/grid-world/tree/main/notebooks/tag) you will find notebooks about the tag game.
 
 ## Structure
 
