@@ -22,9 +22,9 @@ def basic_tag_reward(e):
 
 
 # most of the time we will work with this limited set of actions
-basic_actions = [
+basic_actions = (
     GWorldAction.up,
     GWorldAction.down,
     GWorldAction.left,
     GWorldAction.right,
-]
+)

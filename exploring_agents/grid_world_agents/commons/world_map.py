@@ -1,4 +1,4 @@
-from typing import Collection, Final
+from typing import Final
 
 from grid_world.state import GWorldState
 from grid_world.action import GWorldAction
@@ -9,7 +9,7 @@ from utils.operations import add_tuples
 class WorldMap:
     def __init__(
         self,
-        actions: list[GWorldAction],
+        actions: tuple[GWorldAction],
         world_states: set[GWorldState] = None,
     ):
         self.world_states: set[GWorldState] = (

@@ -1,42 +1,58 @@
 from typing import Collection
 
 from dynamic_programing.policy_evaluation import iterative_policy_evaluation
-from abstractions import EvalFunction, WorldModel, RewardFunction, State, Action, Policy
+from abstractions import (
+    StateEvalDict,
+    WorldModel,
+    State,
+    Action,
+    Policy,
+    StateActionReward,
+)
+from policies import GreedyPolicy, RandomPolicy
 
 from utils.operations import float_dict_comparison
 
 
-def q(
+def q_estimate(
     s: State,
     a: Action,
-    v: EvalFunction,
+    v: StateEvalDict,
     world_model: WorldModel,
-    reward_function: RewardFunction,
+    reward_function: StateActionReward,
     states: Collection[State],
 ) -> float:
     """
-    This is essentially the q function that returns the expected value of an state action pair.
+    This is an estimate of the q function for pi bootstrapping from V.
     """
     return reward_function(s, a) + sum([world_model(s, a)(s0) * v[s0] for s0 in states])
 
 
-def _argmax_q(s, v, world_model, reward_function, actions, states) -> Action:
-    best_score = q(s, actions[0], v, world_model, reward_function, states)
+def _argmax_q(
+    s: State,
+    v: StateEvalDict,
+    world_model: WorldModel,
+    reward_function: StateActionReward,
+    actions: tuple[Action, ...],
+    states: tuple[State, ...],
+) -> Action:
     best_action = actions[0]
-    for a in actions:
-        qa = q(s, a, v, world_model, reward_function, states)
+    best_score = q_estimate(s, best_action, v, world_model, reward_function, states)
+    for a in actions[1:]:
+        qa = q_estimate(s, a, v, world_model, reward_function, states)
         if qa > best_score:
             best_score = qa
             best_action = a
+
     return best_action
 
 
 def get_greedy_policy(
-    v: EvalFunction,
+    v: StateEvalDict,
     world_model: WorldModel,
-    reward_function: RewardFunction,
-    actions: Collection[Action],
-    states: Collection[State],
+    reward_function: StateActionReward,
+    actions: tuple[Action, ...],
+    states: tuple[State, ...],
 ) -> Policy:
     """
     Creates a greed policy with respect to an evaluation function. Since this function only
@@ -56,12 +72,12 @@ def get_greedy_policy(
         for s in states
     }
 
-    return lambda s, a: 1 if (a == gpr.get(s)) else 0
+    return GreedyPolicy(actions, gpr)
 
 
 def _dpi_step(
     v_pi, world_model, reward_function, actions, states
-) -> [Policy, EvalFunction]:
+) -> [Policy, StateEvalDict]:
     pi_1 = get_greedy_policy(v_pi, world_model, reward_function, actions, states)
     v_pi_1 = iterative_policy_evaluation(
         pi_1, world_model, reward_function, actions, states, v_pi
@@ -72,13 +88,13 @@ def _dpi_step(
 
 def dynamic_programing_gpi(
     world_model: WorldModel,
-    reward_function: RewardFunction,
-    actions: Collection[Action],
-    states: Collection[State],
+    reward_function: StateActionReward,
+    actions: tuple[Action, ...],
+    states: tuple[State, ...],
     pi: Policy = None,
+    v0: StateEvalDict = None,
     max_epochs: int = 100,
-    verbose: bool = False,
-) -> [Policy, EvalFunction]:
+) -> [Policy, StateEvalDict]:
     """
     General policy improvement algorithm using dynamic programing.
 
@@ -88,19 +104,17 @@ def dynamic_programing_gpi(
     :param actions: all possible actions
     :param states: all possible states
     :param pi: an initial policy, will use random uniform if none is passed
+    :param v0: estimated EvalFunction for pi, can speed things up
     :param max_epochs: max number of policy iterations to run(will stop early if the value
         function converges)
-    :param verbose: whether we should print additional information or not
     :return: the optimal policy and its value function
     """
 
     if pi is None:
-
-        def pi(*_):
-            return 1 / len(actions)
+        pi = RandomPolicy(actions)
 
     v_pi = iterative_policy_evaluation(
-        pi, world_model, reward_function, actions, states
+        pi, world_model, reward_function, actions, states, v0
     )
 
     for i in range(max_epochs):
@@ -108,8 +122,6 @@ def dynamic_programing_gpi(
         pi, v_pi = _dpi_step(v_pi, world_model, reward_function, actions, states)
 
         if float_dict_comparison(v_pi, v_pi_0):
-            if verbose:
-                print(f"policy converged in {i} epochs")
             break
 
     return pi, v_pi

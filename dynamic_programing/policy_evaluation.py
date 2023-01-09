@@ -1,18 +1,23 @@
-from typing import Collection
-
 import numpy as np
 
-from abstractions import State, EvalFunction, RewardFunction, WorldModel, Policy, Action
+from abstractions import (
+    State,
+    StateEvalDict,
+    WorldModel,
+    Policy,
+    Action,
+    StateActionReward,
+)
 
 
 def _acc_v(
     s: State,
-    v: EvalFunction,
+    v: StateEvalDict,
     pi: Policy,
     world_model: WorldModel,
-    reward_function: RewardFunction,
-    actions: Collection[Action],
-    states: Collection[State],
+    reward_function: StateActionReward,
+    actions: tuple[Action, ...],
+    states: tuple[State, ...],
     gamma: float,
 ) -> float:
     return sum(
@@ -32,10 +37,10 @@ def _acc_v(
 def _iterate_policy_step(
     pi: Policy,
     world_model: WorldModel,
-    reward_function: RewardFunction,
-    actions: Collection[Action],
-    states: Collection[State],
-    v0: EvalFunction,
+    reward_function: StateActionReward,
+    actions: tuple[Action, ...],
+    states: tuple[State, ...],
+    v0: StateEvalDict,
     gamma: float = 1,
 ) -> float:
     v = v0.copy()
@@ -47,13 +52,13 @@ def _iterate_policy_step(
 def iterative_policy_evaluation(
     pi: Policy,
     world_model: WorldModel,
-    reward_function: RewardFunction,
-    actions: Collection[Action],
-    states: Collection[State],
-    v0: EvalFunction = None,
+    reward_function: StateActionReward,
+    actions: tuple[Action, ...],
+    states: tuple[State, ...],
+    v0: StateEvalDict = None,
     gamma: float = 1,
     epsilon: float = 0.01,
-) -> EvalFunction:
+) -> StateEvalDict:
     """
     Function to create evaluation of policy. That is a mapping from states to the estimated
     accumulated discounted reward from that state, when following policy pi.
@@ -64,13 +69,13 @@ def iterative_policy_evaluation(
     :param reward_function: the reward for taking an action in a given state
     :param actions: all possible actions
     :param states: all possible states
-    :param v0: initial policy to iterate over
+    :param v0: initial policy evaluation to iterate over
     :param gamma: discount factor for rewards
     :param epsilon: stop criteria. Iteration will stop whenever the maximum change on a state
         evaluation is lower than this
     :return: the evaluation of policy pi
     """
-    v = {a: 0 for a in states} if v0 is None else v0.copy()
+    v = {s: 0 for s in states} if v0 is None else v0.copy()
 
     delta = 2 * epsilon
     while delta > epsilon:

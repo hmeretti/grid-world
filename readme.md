@@ -36,7 +36,6 @@ The project structure is very simple
 │   ├── generic_agents
 │   ├── grid_world_agents
 │   │   └── commons
-│   ├── policies
 │   └── training
 ├── grid_world
 │   └── visualization
@@ -49,6 +48,7 @@ The project structure is very simple
 ├── persistence
 │   ├── agents
 │   └── training_scripts
+├── policies
 └── utils
 
 ```

@@ -1,4 +1,4 @@
-from typing import Iterable, Collection
+from typing import Iterable
 
 import numpy as np
 
@@ -30,7 +30,7 @@ def get_policy_rec(pi: Policy, world: World, actions: Iterable[Action]) -> Polic
     return pi_rec
 
 
-def get_random_policy(actions: Collection[Action]):
+def get_random_policy(actions: tuple[Action, ...]):
     """
     Builds a random uniform policy over a set of actions
 
@@ -42,7 +42,7 @@ def get_random_policy(actions: Collection[Action]):
 
 
 def sample_action(
-    policy: Policy, state: State, actions: list[ActionTypeVar]
+    policy: Policy, state: State, actions: tuple[ActionTypeVar, ...]
 ) -> ActionTypeVar:
     """
     Selects an action to a certain state following a policy.
@@ -65,7 +65,7 @@ def sample_action(
 
 
 def sample_action_and_exploration(
-    policy: Policy, state: State, actions: list[ActionTypeVar]
+    policy: Policy, state: State, actions: tuple[ActionTypeVar, ...]
 ) -> [ActionTypeVar, bool]:
     """
     Selects an action to a certain state following a policy.
@@ -93,7 +93,7 @@ def sample_action_and_exploration(
 
 
 def get_e_greedy_policy(
-    q: Q, states: list[State], actions: list[Action], epsilon: float = 0.1
+    q: Q, states: tuple[State, ...], actions: tuple[Action, ...], epsilon: float = 0.1
 ):
     """
     This creates an epsilon greedy policy for a Q function. Where we select the prefered
@@ -118,7 +118,7 @@ def get_e_greedy_policy(
 
 
 def get_best_action_from_q(
-    q: Q, s: State, actions: list[ActionTypeVar]
+    q: Q, s: State, actions: tuple[ActionTypeVar, ...]
 ) -> ActionTypeVar:
     """
     Gets, for a given state, the best action from a list of possibilities,

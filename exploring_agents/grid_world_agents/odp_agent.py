@@ -1,12 +1,13 @@
 from typing import Final
 
-from abstractions import Agent, RewardFunction, Action, State, Effect, Policy
+from abstractions import Agent, RewardFunction, Action, State, Effect, StateEvalDict
 from dynamic_programing.policy_improvement import dynamic_programing_gpi
 from exploring_agents.grid_world_agents.commons.world_map import WorldMap
 from grid_world.action import GWorldAction
 from grid_world.grid_world import GridWorld
 from grid_world.state import GWorldState
-from utils.policy import get_random_policy, sample_action
+from policies import RandomPolicy
+from utils.policy import sample_action
 
 
 class ODPAgent(Agent):
@@ -14,7 +15,7 @@ class ODPAgent(Agent):
         self,
         reward_function: RewardFunction,
         world_shape: tuple[int, int],
-        actions: list[GWorldAction],
+        actions: tuple[GWorldAction],
         terminal_coordinates: tuple[int, int] = None,
         gamma: float = 1,
     ):
@@ -40,7 +41,7 @@ class ODPAgent(Agent):
         :param gamma: the gamma discount value to be used when calculating episode returns
         """
         self.reward_function: Final = reward_function
-        self.actions: Final[list[GWorldAction]] = actions
+        self.actions: Final[tuple[GWorldAction]] = actions
         self.gamma = gamma
         self.world_map: WorldMap = (
             WorldMap(world_states=set(), actions=self.actions)
@@ -54,11 +55,11 @@ class ODPAgent(Agent):
         self.optimal_path_found = False
         self.world_shape = world_shape
         self.perfect_run = True
-        self.policy = (
-            self._build_odp_policy()
-            if self.final_state_known
-            else get_random_policy(self.actions)
-        )  # TODO use proper policy class instead(random one already exists)
+        self.v_pi: StateEvalDict | None = None
+        self.policy = RandomPolicy(self.actions)
+
+        if self.final_state_known:
+            self._update_odp_policy()
 
     def select_action(self, state: State) -> Action:
         return sample_action(self.policy, state, self.actions)
@@ -77,7 +78,7 @@ class ODPAgent(Agent):
 
         # in case we already know the final state, and we hit a wall or trap we need to update the policy
         if self.final_state_known and meaningful_update:
-            self.policy = self._build_odp_policy()
+            self._update_odp_policy()
             self.perfect_run = False
 
         return reward
@@ -95,7 +96,7 @@ class ODPAgent(Agent):
 
         # this triggers after the first successful run, if we didn't know the final state
         if not self.final_state_known:
-            self.policy = self._build_odp_policy()
+            self._update_odp_policy()
             self.final_state_known = True
 
     def build_opt_world(self) -> GridWorld:
@@ -127,20 +128,26 @@ class ODPAgent(Agent):
     def _get_world_model(world):
         return lambda s, a: lambda x: 1 if x == world.take_action(s, a)[0] else 0
 
-    def _build_odp_policy(self) -> Policy:
+    def _update_odp_policy(self):
         world = self.build_opt_world()
         world_model = self._get_world_model(world)
+        if self.v_pi is not None:
+            self._update_v_pi(world)
 
+        # assumes everything is deterministic
         rewards_dict = {
             (s, a): self.reward_function(world.take_action(s, a)[1])
             for s in world.states
             for a in self.actions
         }
 
-        policy, _ = dynamic_programing_gpi(
+        self.policy, self.v_pi = dynamic_programing_gpi(
             world_model=world_model,
             reward_function=lambda x, y: rewards_dict[(x, y)],
             actions=self.actions,
             states=world.states,
         )
-        return policy
+
+    def _update_v_pi(self, world: GridWorld) -> None:
+        intermediate_dict = {s.coordinates: self.v_pi[s] for s in self.v_pi}
+        self.v_pi = {s: intermediate_dict[s.coordinates] for s in world.states}

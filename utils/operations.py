@@ -1,4 +1,4 @@
-from typing import Callable, TypeVar
+from typing import Callable, TypeVar, Collection
 
 import numpy as np
 
@@ -21,6 +21,6 @@ def order_dict(
 
 
 def order_callable(
-    f: Callable[[anyVar], float], domain: list[any], reverse: bool = True
+    f: Callable[[anyVar], float], domain: Collection[any], reverse: bool = True
 ) -> list[tuple[anyVar, float]]:
     return order_dict({x: f(x) for x in domain}, reverse=reverse)

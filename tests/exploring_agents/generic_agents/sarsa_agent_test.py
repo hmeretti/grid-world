@@ -18,7 +18,7 @@ class TestSarsaAgent:
 
         agent1 = SarsaAgent(
             reward_function=basic_reward,
-            actions=[a0, a1, a2],
+            actions=(a0, a1, a2),
             gamma=gamma,
             alpha=alpha,
             epsilon=epsilon,

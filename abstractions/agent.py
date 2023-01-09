@@ -18,7 +18,7 @@ class Agent(ABC, Generic[ActionTypeVar, StateTypeVar]):
         raise NotImplementedError("init not implemented")
 
     gamma: float = NotImplemented
-    actions: list[ActionTypeVar] = NotImplemented
+    actions: tuple[ActionTypeVar, ...] = NotImplemented
     policy: Policy = NotImplemented
 
     @abstractmethod

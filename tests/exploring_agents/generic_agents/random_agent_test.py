@@ -12,7 +12,7 @@ class TestRandomAgent:
         # This is a stochastic test, which is subject to random failure, although very unlikely
 
         agent1 = RandomAgent(
-            reward_function=basic_reward, actions=[a0, a1, a2], gamma=1
+            reward_function=basic_reward, actions=(a0, a1, a2), gamma=1
         )
         iterations = 1e5
         actions = [agent1.select_action(s0) for _ in range(int(iterations))]

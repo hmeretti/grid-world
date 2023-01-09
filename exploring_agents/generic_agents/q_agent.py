@@ -1,7 +1,7 @@
 from typing import Final
 
 from abstractions import Agent, RewardFunction, Action, DecayFunction, State, Effect, Q
-from exploring_agents.policies.epsilon_greedy import EpsilonGreedy
+from policies import EpsilonGreedy
 from utils.evaluators import best_q_value
 from utils.policy import get_best_action_from_q, sample_action
 
@@ -10,7 +10,7 @@ class QAgent(Agent):
     def __init__(
         self,
         reward_function: RewardFunction,
-        actions: list[Action],
+        actions: tuple[Action, ...],
         gamma: float = 1,
         alpha: float = 0.1,
         epsilon: float = 0.1,

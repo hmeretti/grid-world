@@ -11,7 +11,7 @@ class GridWorld:
     def __init__(
         self,
         grid_shape: tuple[int, int],
-        terminal_states_coordinates: Collection[tuple[int, int]] = None,
+        terminal_states_coordinates: tuple[tuple[int, int]] = None,
         initial_state_coordinates: tuple[int, int] = (0, 0),
         initial_state_coordinates_2: tuple[int, int] = None,
         walls_coordinates: Collection[tuple[int, int]] = None,
@@ -31,14 +31,14 @@ class GridWorld:
 
         The legal actions in the world are: up(u), down(d), left(l), right(r), up right(ur),
         up left(ul), down right(dr), down left(dl) and wait(w).
-        Whether the agent can take all of then or just a few is up to him. However this a restriction
+        Whether the agent can take all of them or just a few is up to him. However, this a restriction
         on the actions that can be taken(for instance the agent can't move two to the right at once), this is
         done to simplify the dynamics.
 
         :param grid_shape: The shape of the world
         :param terminal_states_coordinates: coordinates for terminal states, actions in these return an effect of +1
             and won't move the agent
-        :param initial_state_coordinates: coordinates for a initial state
+        :param initial_state_coordinates: coordinates for an initial state
         :param initial_state_coordinates_2: coordinates for a second initial state(not always useful)
         :param walls_coordinates: coordinates for walls, these will be blocked so the agent can't enter then;
             walls are not valid states
@@ -68,7 +68,7 @@ class GridWorld:
             if terminal_states_coordinates is not None
             else []
         )
-        self.states: Final[tuple[GWorldState, ...]] = tuple(
+        self.states: Final[tuple[GWorldState]] = tuple(
             [
                 self._coordinates_to_state((i, j))
                 for i in range(grid_shape[0])
@@ -96,8 +96,8 @@ class GridWorld:
         """
         Represents the effect of an agent taking an action in the world
 
-        :param state: the state the agent is when taking the action
-        :param action: the action being taken
+        :param state: where the agent is when taking the action
+        :param action: being taken
         :return: a tuple indicating the resulting state and an integer indicating the effect of the action:
             0: normal transition
             1: agent is in a terminal state

@@ -108,11 +108,11 @@ def animate_tag_episode(
         )
         console.refresh()
 
+        s2 = states_2[step]
         # we'll add this, so we don't print a weird move that is saved
         if step > 0 and s1.coordinates == s2.coordinates:
             break
 
-        s2 = states_2[step]
         if step > 0:
             time.sleep(sleep_time)
             restore_world_coordinate(*states_2[step - 1].coordinates, world, console)
