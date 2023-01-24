@@ -1,3 +1,4 @@
+from .decay_function import DecayFunction
 from .state import State
 from .action import Action
 from .type_aliases import (
@@ -7,7 +8,6 @@ from .type_aliases import (
     RewardFunction,
     Q,
     PolicyRec,
-    DecayFunction,
     StateActionReward,
 )
 from .policy import Policy
