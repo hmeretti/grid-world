@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
 
-from exploring_agents.commons.dacaying_functions import get_exp_decay
+from exploring_agents.commons.dacaying_functions import ExpDecay
 from policies import EpsilonGreedy
 from tests.constants.actions import a0, a1, a2, a3
 from tests.constants.states import s0, s1, s2
@@ -11,7 +11,7 @@ class TestEpsilonGreedy:
     @staticmethod
     def test_call_update_and_decay():
         epsilon = 0.1
-        decay_func = get_exp_decay()
+        decay_func = ExpDecay()
         test_policy = EpsilonGreedy(
             epsilon=epsilon, actions=(a0, a1, a2), epsilon_decay=decay_func
         )

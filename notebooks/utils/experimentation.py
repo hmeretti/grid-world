@@ -1,4 +1,5 @@
 import itertools
+from multiprocessing import Pool
 
 import numpy as np
 import pandas as pd
@@ -22,27 +23,45 @@ def print_summary(results):
         print(f"{k}: {v:.2f}")
 
 
+def _train_round(arguments):
+    base_arguments = arguments["base_arguments"]
+    base_agent = arguments["base_agent"]
+    world = arguments["world"]
+    episodes = arguments["episodes"]
+
+    agent = base_agent(**base_arguments)
+    return train_agent(agent=agent, world=world, episodes=episodes)
+
+
 # these are some useful functions for experimentation
 def get_results(
-    base_agent: type[Agent],
-    world: [World],
-    base_arguments: dict[str, any],
-    extra_parameters: dict[str, any],
-    training_rounds: int,
-    episodes: int,
+    base_agent,
+    world,
+    base_arguments,
+    training_rounds,
+    episodes,
 ) -> tuple[list[list[float]], list[list[int]]]:
+    arguments = {
+        "base_arguments": base_arguments,
+        "base_agent": base_agent,
+        "world": world,
+        "episodes": episodes,
+    }
+
     returns = []
     lengths = []
 
-    for _ in range(training_rounds):
-
-        agent = base_agent(**base_arguments, **extra_parameters)
-
-        episode_lengths, episode_returns = train_agent(
-            agent=agent, world=world, episodes=episodes
+    # run rounds in parallalen
+    with Pool() as pool:
+        results = pool.map(
+            # lambda _: _train_round(base_arguments, world, episodes, agent),
+            _train_round,
+            training_rounds * [arguments],
         )
-        returns.append(episode_returns)
-        lengths.append(episode_lengths)
+
+    for x, y in results:
+        returns.append(y)
+        lengths.append(x)
 
     return returns, lengths
 
@@ -63,7 +82,7 @@ def get_exp_results(
         (
             cur_args,
             get_results(
-                base_agent, world, base_arguments, cur_args, training_rounds, episodes
+                base_agent, world, base_arguments | cur_args, training_rounds, episodes
             ),
         )
         for cur_args in blown_arguments
