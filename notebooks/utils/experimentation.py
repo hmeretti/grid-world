@@ -51,10 +51,9 @@ def get_results(
     returns = []
     lengths = []
 
-    # run rounds in parallalen
+    # run rounds in parallel
     with Pool() as pool:
         results = pool.map(
-            # lambda _: _train_round(base_arguments, world, episodes, agent),
             _train_round,
             training_rounds * [arguments],
         )
